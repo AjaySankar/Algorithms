@@ -1,3 +1,4 @@
+/*This program does binary search over a sorted array*/
 #include<stdio.h>
 #include<iostream>
 using namespace std;
