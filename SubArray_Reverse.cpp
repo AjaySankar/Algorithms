@@ -35,9 +35,9 @@ bool checkReverse(int *arr,int n){
     cout << "The decreasing part begins at " << j+1 << " and ends at " << l+1 << endl;
     if(l==n-1)
         return true;
-    if(arr[j]>arr[l+1])  // To handle cases like 1 2 3 6 5 -1 7 8 9     (3>-1)
+    if(arr[j]>arr[l+1])  // To handle cases like 1 2 3 6 5 -1 7 8 9     (3>-1)  // End of first increasing part is <= end of decreasing
         return false;
-    if(arr[l+1]>arr[j+2])   //To handle cases like 1 2 3 10 5 4 7 8 9  (10>7)
+    if(arr[l+1]>arr[j+2])   //To handle cases like 1 2 3 10 5 4 7 8 9  (10>7)	//Begin of decreasing <= Begin of second increasing
         return false;
     //find second increasing part
     int m=l+2;
