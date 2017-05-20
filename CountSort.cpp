@@ -1,3 +1,4 @@
+//Counting sort is a linear time sorting algorithm that sort in O(n+k) time when elements are in range from 1 to k.
 #include <iostream>
 using namespace std;
 #define MAX 10
