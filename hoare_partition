@@ -1,4 +1,29 @@
 #include <iostream>
+/*Adding modified partition algorithm 
+1. The below partition algorithm takes the middle element as the pivot of the array which prevents the worst case
+complexity in case of sorted arrays.
+2. To reduce the recursion depth, recur first for the smaller half of the array, and use a tail call to recurse into the other.
+3. Insertion sort works better for small subarrays. Insertion sort can be used for invocations on such small arrays.
+   For example, library implementation of qsort uses insertion sort below size 7.
+
+void FindPivot(int *arr,int n,int low,int high){
+    int pivot_index=((n%2)==0)?((n/2)-1):n/2;
+    int pivot=arr[pivot_index];
+    while(1){
+        while(arr[low]<pivot)
+            low++;
+        while(arr[high]>pivot)
+            high--;
+        if(low>=high)
+            return high;
+        swap(&arr[low],&arr[high]);
+    }
+}
+low is 0
+high is n-1
+n is the size of array
+*/
+
 using namespace std;
 void swap(int *a,int *b){
     int temp=*a;
