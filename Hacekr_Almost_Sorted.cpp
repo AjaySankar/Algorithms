@@ -23,8 +23,6 @@ bool Can_Swaps(int *arr,int n,int *left,int *right){
             ditches==2?ditch_index_two=i: ditch_index_two=ditch_index_two;
         }
     }
-    //cout << "Ditches are : " << ditches << endl;
-    //cout << ditch_index_one << " " << ditch_index_two << endl;
     if(ditches >= 3)
         return false;
     //In case if ditches is 2 then swap values at index ditch_index_one and ditch_index_two+1
@@ -67,7 +65,6 @@ bool Can_Reverse(int *arr,int n,int *left,int *right){
     }
     is_Increasing?first_incr_begin=0:first_incr_begin=-1;
     is_Increasing?first_incr_end=i:first_incr_end=-1;
-    //cout << first_incr_begin << " " << first_incr_end << endl;
     if(i==n-1&&is_Increasing){
         *left=-1;*right=-1;
         return true;      //ALREADY_SORTED
@@ -84,7 +81,6 @@ bool Can_Reverse(int *arr,int n,int *left,int *right){
             break;
     }
     i==n-1?decr_end=n-1:decr_end=i;
-    //cout << decr_begin << " " << decr_end << endl;
     if(i==n-1){     //NO_SECOND_INCREASING_PART
         if(arr[decr_end]>arr[decr_begin-1]){
             *left=decr_begin;*right=n-1;
@@ -101,7 +97,6 @@ bool Can_Reverse(int *arr,int n,int *left,int *right){
             break;
     }
     sec_incr_end=i;
-    //cout << sec_incr_begin << " " << sec_incr_end << endl;
     if(i!=n-1)
         return false;
     if(first_incr_begin==-1){   // No first increasing part
