@@ -59,15 +59,26 @@ class BST{
         BST_Node* root;
     public:
         BST();
+        BST(BST_Node* );
         void insert(int element);
         void printTree(Traversal_Type type);
         void Inorder(BST_Node* root);
         void Preorder(BST_Node* root);
         void Postorder(BST_Node* root);
+        BST_Node* getMinimum();
+        BST_Node* getMaximum();
+        BST_Node* getRoot();
+        BST_Node* Search(int value);
+        BST_Node* getInorderSuccessor(int value);
 };
 
 BST::BST(){
     root = NULL;
+}
+
+BST::BST(BST_Node* node){   //Need to implement copy constructor this is just shallow copy so donot edit
+                            //the output tree of ths constructor (Read only)
+    root = node;
 }
 
 void BST::insert(int element){
@@ -98,6 +109,70 @@ void BST::insert(int element){
         }
     }
     return;
+}
+
+
+BST_Node* BST::getMinimum(){
+    BST_Node* temp = root;
+    while(temp->getLeft()){
+        temp = temp->getLeft();
+    }
+    return temp;
+}
+
+BST_Node* BST::getMaximum(){
+    BST_Node* temp = root;
+    while(temp->getRight()){
+        temp = temp->getRight();
+    }
+    return temp;
+}
+
+BST_Node* BST::getRoot(){
+    return root;
+}
+
+BST_Node* BST::Search(int value){
+    BST_Node* temp = root;
+    while(temp){
+        if(temp->getValue() < value){
+            temp = temp->getRight();
+        }
+        else if (temp->getValue() > value)
+        {   
+            temp = temp->getLeft();
+        }
+        else{
+            break;
+        }
+    }
+    return temp;
+}
+
+BST_Node* BST::getInorderSuccessor(int value){
+    BST_Node* val  = Search(value);
+    BST_Node* succ = new BST_Node();
+    if(val){
+        if(val->getRight()){
+            BST* subtree = new BST(val->getRight());
+            succ = subtree->getMinimum();
+        }
+        else{
+            BST_Node* temp = root;
+            while(temp){
+                if(temp->getValue() > value){
+                    succ = temp;
+                    temp = temp->getLeft();
+                }
+                else if (temp->getValue() < value){
+                    temp = temp->getRight();
+                }   
+                else
+                    break;
+            }
+        }
+    }
+    return succ;
 }
 
 void BST::printTree(Traversal_Type type){
@@ -171,7 +246,9 @@ int main(){
     tree->insert(13);
     tree->insert(9);
     tree->printTree(IN_ORDER);   cout << endl;
-    tree->printTree(PRE_ORDER);  cout << endl;
-    tree->printTree(POST_ORDER); cout << endl;
+    cout << "Inoder successor is: " << tree->getInorderSuccessor(4)->getValue() << endl;
+    //tree->printTree(PRE_ORDER);  cout << endl;
+    //tree->printTree(POST_ORDER); cout << endl;
+    //cout << "Maximum value in the tree: " << tree->getMaximum()->getValue() << endl;
     return 0;
 }
