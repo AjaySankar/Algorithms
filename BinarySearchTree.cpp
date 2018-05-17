@@ -69,6 +69,7 @@ class BST{
         BST_Node* getMaximum();
         BST_Node* getRoot();
         BST_Node* Search(int value);
+        BST_Node* SearchForParent(int value);
         BST_Node* getInorderSuccessor(int value);
 };
 
@@ -147,6 +148,26 @@ BST_Node* BST::Search(int value){
         }
     }
     return temp;
+}
+
+BST_Node* BST::SearchForParent(int value){
+    BST_Node* temp   = root;
+    BST_Node* parent = new BST_Node();
+    while(temp){
+        if(temp->getValue() < value){
+            parent = temp;
+            temp = temp->getRight();
+        }
+        else if (temp->getValue() > value)
+        {   
+            parent = temp;
+            temp = temp->getLeft();
+        }
+        else{
+            break;
+        }
+    }
+    return parent;
 }
 
 BST_Node* BST::getInorderSuccessor(int value){
@@ -246,9 +267,12 @@ int main(){
     tree->insert(13);
     tree->insert(9);
     tree->printTree(IN_ORDER);   cout << endl;
-    cout << "Inoder successor is: " << tree->getInorderSuccessor(4)->getValue() << endl;
+    //cout << "Inoder successor is: " << tree->getInorderSuccessor(4)->getValue() << endl;
     //tree->printTree(PRE_ORDER);  cout << endl;
     //tree->printTree(POST_ORDER); cout << endl;
     //cout << "Maximum value in the tree: " << tree->getMaximum()->getValue() << endl;
+    BST_Node* parent;
+    parent = tree->SearchForParent(18);
+    cout << "Parent is " << parent->getValue() << endl;
     return 0;
 }
