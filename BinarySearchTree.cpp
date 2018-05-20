@@ -65,12 +65,18 @@ class BST{
         void Inorder(BST_Node* root);
         void Preorder(BST_Node* root);
         void Postorder(BST_Node* root);
+        bool isLeaf(BST_Node* node);
+        bool hasLeftChild(BST_Node* node);
+        bool hasRightChild(BST_Node* node);
+        bool isLeftChild(BST_Node* parent,BST_Node* child);
+        bool isRightChild(BST_Node* parent,BST_Node* child);
         BST_Node* getMinimum();
         BST_Node* getMaximum();
         BST_Node* getRoot();
         BST_Node* Search(int value);
         BST_Node* SearchForParent(int value);
         BST_Node* getInorderSuccessor(int value);
+        void deleteNode(int element);
 };
 
 BST::BST(){
@@ -151,6 +157,9 @@ BST_Node* BST::Search(int value){
 }
 
 BST_Node* BST::SearchForParent(int value){
+    if(root->getValue() == value){
+        return (BST_Node*)NULL;
+    }
     BST_Node* temp   = root;
     BST_Node* parent = new BST_Node();
     while(temp){
@@ -168,6 +177,83 @@ BST_Node* BST::SearchForParent(int value){
         }
     }
     return parent;
+}
+
+bool BST::hasLeftChild(BST_Node* node){
+    return node->getLeft()!=NULL;
+}
+
+bool BST::hasRightChild(BST_Node* node){
+    return node->getRight()!=NULL;
+}
+
+bool BST::isLeaf(BST_Node* node){
+    return !(hasLeftChild(node) || hasRightChild(node));
+}
+
+bool BST::isLeftChild(BST_Node *parent,BST_Node* child){
+    return hasLeftChild(parent) && parent->getLeft() == child;
+}
+
+bool BST::isRightChild(BST_Node* parent,BST_Node* child){
+    return hasRightChild(parent) && parent->getRight() == child;
+}
+
+void BST::deleteNode(int element){
+    BST_Node* node = new BST_Node();
+    if((node = Search(element)) == NULL){
+        cout << "Element to be deleted not found" << endl;
+        return;
+    }
+    if(isLeaf(root)){ //handle the case where only root is in the tree with no children
+        //free root;
+        return;
+    }
+    BST_Node* parent = SearchForParent(element);
+    if(isLeaf(node)){  //leaf node
+        if(hasLeftChild(parent) && parent->getLeft()->getValue() == element)
+            parent->addLeft(NULL);
+        else
+            parent->addRight(NULL); 
+        //free node
+        return;
+    }
+    if(hasLeftChild(node) && !hasRightChild(node)){ //node with only left child
+        if(!parent){    //handle case where root has to be deleted
+            BST_Node* temp = root;
+            root = root->getLeft();
+            //free temp
+            return;
+        }
+        isLeftChild(parent,node) ? parent->addLeft(node->getLeft()) 
+                                 : parent->addRight(node->getLeft());
+        //free node
+        return;
+    }
+    if(hasRightChild(node) && !hasLeftChild(node)){ //node with only right child
+        if(!parent){    //handle case where root has to be deleted
+            BST_Node* temp = root;
+            root = root->getRight();
+            //free temp
+            return;
+        }
+        isLeftChild(parent,node) ? parent->addLeft(node->getRight()) 
+                                 : parent->addRight(node->getRight());
+        //free node
+        return;
+    }
+    //node to be deleted has two children
+    BST_Node* inorder_sucr = getInorderSuccessor(element);
+    BST_Node* parent_inorder_sucr = SearchForParent(inorder_sucr->getValue());
+    node->setValue(inorder_sucr->getValue());
+    if(isRightChild(node,inorder_sucr)){  //check if inorder successor is immediate right child of node to be deleted
+        node->addRight(inorder_sucr->getRight()); //just replace the inorder successor with it's right child
+        //free inorder_sucr;
+        return;
+    }
+    parent_inorder_sucr->addLeft(inorder_sucr->getRight()); //if inorder successor is in right subtree then replace it with its right child
+    //free inorder_scr;
+    return;
 }
 
 BST_Node* BST::getInorderSuccessor(int value){
@@ -267,12 +353,7 @@ int main(){
     tree->insert(13);
     tree->insert(9);
     tree->printTree(IN_ORDER);   cout << endl;
-    //cout << "Inoder successor is: " << tree->getInorderSuccessor(4)->getValue() << endl;
-    //tree->printTree(PRE_ORDER);  cout << endl;
-    //tree->printTree(POST_ORDER); cout << endl;
-    //cout << "Maximum value in the tree: " << tree->getMaximum()->getValue() << endl;
-    BST_Node* parent;
-    parent = tree->SearchForParent(18);
-    cout << "Parent is " << parent->getValue() << endl;
+    tree->deleteNode(15);
+    tree->printTree(IN_ORDER);   cout << endl;
     return 0;
 }
