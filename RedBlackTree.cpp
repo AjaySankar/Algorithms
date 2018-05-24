@@ -10,6 +10,8 @@ class RB_BST_Node : public BST_Node{
         explicit RB_BST_Node(int element,char c);
         char getColor();
         void setColor(char c);
+        bool isRed();
+        bool isBlack();
 };
 
 RB_BST_Node::RB_BST_Node(){
@@ -33,13 +35,31 @@ void RB_BST_Node::setColor(char c){
     return;
 }
 
+bool RB_BST_Node::isRed(){
+    return color=='R';
+}
+
+bool RB_BST_Node::isBlack(){
+    return color=='B';
+}
+
 class RB_BST : public BST{
     public:
         RB_BST();
-        RB_BST(RB_BST_Node* );
+        RB_BST(RB_BST_Node* node);
+        void LeftRotate(RB_BST_Node* node);
+        void RightRotate(RB_BST_Node* node);
         void insert(int element,char c);
         void RB_BST_Fixup(RB_BST_Node* node);
 };
+
+void RB_BST::LeftRotate(RB_BST_Node* node){
+
+}
+
+void RB_BST::RightRotate(RB_BST_Node* node){
+
+}
 
 void RB_BST::insert(int element){
     RB_BST_Node* node = new RB_BST_Node(element);
