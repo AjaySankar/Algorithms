@@ -7,6 +7,7 @@ class BST_Node{
         int value;
         BST_Node* left;
         BST_Node* right;
+        BST_Node* parent;
     public:
         BST_Node();
         explicit BST_Node(int element);
@@ -22,12 +23,14 @@ BST_Node::BST_Node(){
     value = INT16_MIN;
     left  = NULL;
     right = NULL;
+    parent = NULL;
 }
 
 BST_Node::BST_Node(int element){
     value = element;
     left  = NULL;
     right = NULL;
+    parent = NULL;
 }
 
 void BST_Node::setValue(int element){
@@ -46,6 +49,14 @@ BST_Node* BST_Node::getRight(){
     return right;
 }
 
+BST_Node* BST_Node::getParent(){
+    return parent;
+}
+
+void BST_Node::setParent(BST_Node* p){
+    parent = p;
+}
+
 void BST_Node::addLeft(BST_Node* node){
     left = node;
 }
@@ -60,7 +71,7 @@ class BST{
     public:
         BST();
         BST(BST_Node* );
-        void insert(int element);
+        void insert(BST_Node* node);
         void printTree(Traversal_Type type);
         void Inorder(BST_Node* root);
         void Preorder(BST_Node* root);
@@ -88,17 +99,18 @@ BST::BST(BST_Node* node){   //Need to implement copy constructor this is just sh
     root = node;
 }
 
-void BST::insert(int element){
+void BST::insert(BST_Node* node){
     if(!root){
-        root = new BST_Node(element);
+        root = node;
         return;
     }
     BST_Node* temp = root;
-    BST_Node* newNode = new BST_Node(element);
+    int element = node->getValue();
     while(1){
         if(element <= temp->getValue()){
             if(temp->getLeft() == NULL){
-                temp->addLeft(newNode); //if left of node is empty then insert node as left child
+                temp->addLeft(node); //if left of node is empty then insert node as left child
+                node->setParent(temp);
                 break;
             }
             else{
@@ -107,7 +119,8 @@ void BST::insert(int element){
         }
         else{
             if(temp->getRight() == NULL){
-                temp->addRight(newNode);//if right of node is empty then insert node as right child
+                temp->addRight(node);//if right of node is empty then insert node as right child
+                node->setParent(temp);
                 break;
             }
             else{
