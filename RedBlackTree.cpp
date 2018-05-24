@@ -16,8 +16,8 @@ RB_BST_Node::RB_BST_Node(){
     color = 'R';
 }
 
-RB_BST_Node::RB_BST_Node(int element,char c) : BST_Node(element){
-    setColor(c);
+RB_BST_Node::RB_BST_Node(int element) : BST_Node(element){
+    this();
 }
 
 char RB_BST_Node::getColor(){
@@ -35,15 +35,19 @@ void RB_BST_Node::setColor(char c){
 
 class RB_BST : public BST{
     public:
-        BST();
-        BST(BST_Node* );
+        RB_BST();
+        RB_BST(RB_BST_Node* );
         void insert(int element,char c);
         void RB_BST_Fixup(RB_BST_Node* node);
 };
 
-void RB_BST::insert(int element,char c){
-    RB_BST_Node* node = new RB_BST_Node(element,c);
+void RB_BST::insert(int element){
+    RB_BST_Node* node = new RB_BST_Node(element);
     BST::insert(node);
+    if(node == root){
+        root->setColor('B');
+        return;
+    }
     RB_BST_Fixup(node);
 }
 
