@@ -1,94 +1,6 @@
 #include<iostream>
 using namespace std;
-enum Traversal_Type{PRE_ORDER=1,IN_ORDER,POST_ORDER};
-
-class BST_Node{
-    private:
-        int value;
-        BST_Node* left;
-        BST_Node* right;
-        BST_Node* parent;
-    public:
-        BST_Node();
-        explicit BST_Node(int element);
-        int getValue();
-        void setValue(int element);
-        BST_Node* getLeft();
-        BST_Node* getRight();
-        void addLeft(BST_Node* node);
-        void addRight(BST_Node* node);
-};
-
-BST_Node::BST_Node(){
-    value = INT16_MIN;
-    left  = NULL;
-    right = NULL;
-    parent = NULL;
-}
-
-BST_Node::BST_Node(int element){
-    value = element;
-    left  = NULL;
-    right = NULL;
-    parent = NULL;
-}
-
-void BST_Node::setValue(int element){
-    value = element;
-}
-
-int BST_Node::getValue(){
-    return value;
-}
-
-BST_Node* BST_Node::getLeft(){
-    return left;
-}
-
-BST_Node* BST_Node::getRight(){
-    return right;
-}
-
-BST_Node* BST_Node::getParent(){
-    return parent;
-}
-
-void BST_Node::setParent(BST_Node* p){
-    parent = p;
-}
-
-void BST_Node::addLeft(BST_Node* node){
-    left = node;
-}
-
-void BST_Node::addRight(BST_Node* node){
-    right = node;
-}
-
-class BST{
-    private:
-        BST_Node* root;
-    public:
-        BST();
-        BST(BST_Node* );
-        void insert(BST_Node* node);
-        void printTree(Traversal_Type type);
-        void Inorder(BST_Node* root);
-        void Preorder(BST_Node* root);
-        void Postorder(BST_Node* root);
-        bool isLeaf(BST_Node* node);
-        bool hasLeftChild(BST_Node* node);
-        bool hasRightChild(BST_Node* node);
-        bool isLeftChild(BST_Node* parent,BST_Node* child);
-        bool isRightChild(BST_Node* parent,BST_Node* child);
-        BST_Node* getMinimum();
-        BST_Node* getMaximum();
-        BST_Node* getRoot();
-        BST_Node* Search(int value);
-        BST_Node* SearchForParent(int value);
-        BST_Node* getInorderSuccessor(int value);
-        void deleteNode(int element);
-};
+#include "BST.h"
 
 BST::BST(){
     root = NULL;
@@ -100,6 +12,10 @@ BST::BST(BST_Node* node){   //Need to implement copy constructor this is just sh
 }
 
 void BST::insert(BST_Node* node){
+    if(!node){
+        cout << "Node is not initialized" << endl;
+        return;
+    }
     if(!root){
         root = node;
         return;
@@ -131,6 +47,9 @@ void BST::insert(BST_Node* node){
     return;
 }
 
+void BST::insertValue(int element){
+    insert(new BST_Node(element));
+}
 
 BST_Node* BST::getMinimum(){
     BST_Node* temp = root;
@@ -354,17 +273,17 @@ void BST::Postorder(BST_Node* root){
 
 int main(){
     BST *tree = new BST();
-    tree->insert(15);
-    tree->insert(6);
-    tree->insert(18);
-    tree->insert(3);
-    tree->insert(7);
-    tree->insert(17);
-    tree->insert(20);
-    tree->insert(2);
-    tree->insert(4);
-    tree->insert(13);
-    tree->insert(9);
+    tree->insertValue(15);
+    tree->insertValue(6);
+    tree->insertValue(18);
+    tree->insertValue(3);
+    tree->insertValue(7);
+    tree->insertValue(17);
+    tree->insertValue(20);
+    tree->insertValue(2);
+    tree->insertValue(4);
+    tree->insertValue(13);
+    tree->insertValue(9);
     tree->printTree(IN_ORDER);   cout << endl;
     tree->deleteNode(15);
     tree->printTree(IN_ORDER);   cout << endl;
