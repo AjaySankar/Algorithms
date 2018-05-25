@@ -1,7 +1,7 @@
 #include "BST_Node.h"
 enum Traversal_Type{PRE_ORDER=1,IN_ORDER,POST_ORDER};
 class BST{
-    private:
+    protected:
         BST_Node* root;
     public:
         BST();

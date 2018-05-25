@@ -271,7 +271,7 @@ void BST::Postorder(BST_Node* root){
      printf("%d ", root->getValue());  
 }
 
-int main(){
+/*int main(){
     BST *tree = new BST();
     tree->insertValue(15);
     tree->insertValue(6);
@@ -288,4 +288,4 @@ int main(){
     tree->deleteNode(15);
     tree->printTree(IN_ORDER);   cout << endl;
     return 0;
-}
+}*/

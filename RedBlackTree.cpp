@@ -1,4 +1,5 @@
 #include<iostream>
+#include "BST.h"
 using namespace std;
 
 class RB_BST_Node : public BST_Node{
@@ -7,7 +8,7 @@ class RB_BST_Node : public BST_Node{
     
     public:
         RB_BST_Node();
-        explicit RB_BST_Node(int element,char c);
+        explicit RB_BST_Node(int element);
         char getColor();
         void setColor(char c);
         bool isRed();
@@ -19,7 +20,7 @@ RB_BST_Node::RB_BST_Node(){
 }
 
 RB_BST_Node::RB_BST_Node(int element) : BST_Node(element){
-    this();
+    color = 'R';
 }
 
 char RB_BST_Node::getColor(){
@@ -44,12 +45,14 @@ bool RB_BST_Node::isBlack(){
 }
 
 class RB_BST : public BST{
+    private:
+        RB_BST_Node *root;
     public:
         RB_BST();
         RB_BST(RB_BST_Node* node);
         void LeftRotate(RB_BST_Node* node);
         void RightRotate(RB_BST_Node* node);
-        void insert(int element,char c);
+        void insert(int element);
         void RB_BST_Fixup(RB_BST_Node* node);
 };
 
@@ -73,4 +76,9 @@ void RB_BST::insert(int element){
 
 void RB_BST::RB_BST_Fixup(RB_BST_Node* node){
 
+}
+
+int main(int argc, char const *argv[]){
+    /* code */
+    return 0;
 }
