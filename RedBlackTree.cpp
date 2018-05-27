@@ -112,6 +112,13 @@ class RB_BST{
         void LeftRotate(RB_BST_Node* node);
         void RightRotate(RB_BST_Node* node);
         void RB_BST_Fixup(RB_BST_Node* node);
+        bool isLeaf(RB_BST_Node* node);
+        bool hasLeftChild(RB_BST_Node* node);
+        bool hasRightChild(RB_BST_Node* node);
+        bool isLeftChild(RB_BST_Node* parent,RB_BST_Node* child);
+        bool isRightChild(RB_BST_Node* parent,RB_BST_Node* child);
+        RB_BST_Node* Search(int value);
+        RB_BST_Node* getRoot();
 };
 
 RB_BST::RB_BST(){
@@ -119,7 +126,20 @@ RB_BST::RB_BST(){
 }
 
 void RB_BST::LeftRotate(RB_BST_Node* node){
-
+    // Left Rotation on a node assumes that its right child is not NULL
+    RB_BST_Node* x = node;
+    RB_BST_Node* y = node->getRight();
+    x->addRight(y->getLeft());
+    y->getLeft()->setParent(x);
+    y->setParent(x->getParent());
+    if(!x->getParent())
+        root = y;
+    else if(isLeftChild(x->getParent(),x))
+        x->getParent()->addLeft(y);
+    else
+        x->getParent()->addRight(y);
+    y->addLeft(x);
+    x->setParent(y);
 }
 
 void RB_BST::RightRotate(RB_BST_Node* node){
@@ -219,6 +239,27 @@ void RB_BST::Postorder(RB_BST_Node* root){
      printf("%d ", root->getValue());  
 }
 
+RB_BST_Node* RB_BST::Search(int value){
+    RB_BST_Node* temp = root;
+    while(temp){
+        if(temp->getValue() < value){
+            temp = temp->getRight();
+        }
+        else if (temp->getValue() > value)
+        {   
+            temp = temp->getLeft();
+        }
+        else{
+            break;
+        }
+    }
+    return temp;
+}
+
+RB_BST_Node* RB_BST::getRoot(){
+    return root;
+}
+
 void RB_BST::insertValue(int element){
     RB_BST_Node* node = new RB_BST_Node(element);
     RB_BST::insert(node);
@@ -233,12 +274,37 @@ void RB_BST::RB_BST_Fixup(RB_BST_Node* node){
 
 }
 
+bool RB_BST::isLeftChild(RB_BST_Node *parent,RB_BST_Node* child){
+    return hasLeftChild(parent) && parent->getLeft() == child;
+}
+
+bool RB_BST::isRightChild(RB_BST_Node* parent,RB_BST_Node* child){
+    return hasRightChild(parent) && parent->getRight() == child;
+}
+
+
+bool RB_BST::hasLeftChild(RB_BST_Node* node){
+    return node->getLeft()!=NULL;
+}
+
+bool RB_BST::hasRightChild(RB_BST_Node* node){
+    return node->getRight()!=NULL;
+}
+
+bool RB_BST::isLeaf(RB_BST_Node* node){
+    return !(hasLeftChild(node) || hasRightChild(node));
+}
+
 int main(int argc, char const *argv[]){
     RB_BST* tree = new RB_BST();
     int keys[14] = {7,4,11,3,6,9,18,2,14,19,12,17,22,20};
     for(int i=0;i<14;i++){
         tree->insertValue(keys[i]);
     }
+    tree->printTree(IN_ORDER);
+    RB_BST_Node* temp = tree->Search(11);
+    tree->LeftRotate(temp);
+    cout << endl;
     tree->printTree(IN_ORDER);
     return 0;
 }
