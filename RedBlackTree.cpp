@@ -130,7 +130,8 @@ void RB_BST::LeftRotate(RB_BST_Node* node){
     RB_BST_Node* x = node;
     RB_BST_Node* y = node->getRight();
     x->addRight(y->getLeft());
-    y->getLeft()->setParent(x);
+    if(y->getLeft())
+        y->getLeft()->setParent(x);
     y->setParent(x->getParent());
     if(!x->getParent())
         root = y;
@@ -143,7 +144,21 @@ void RB_BST::LeftRotate(RB_BST_Node* node){
 }
 
 void RB_BST::RightRotate(RB_BST_Node* node){
-
+// Right Rotation on a node assumes that its left child is not NULL
+    RB_BST_Node* y = node;
+    RB_BST_Node* x = node->getLeft();
+    y->addLeft(x->getRight());
+    if(x->getRight())
+        x->getRight()->setParent(y);
+    x->setParent(y->getParent());
+    if(!y->getParent())
+        root = x;
+    else if(isRightChild(y->getParent(),y))
+        y->getParent()->addRight(x);
+    else
+        y->getParent()->addLeft(x);
+    x->addRight(y);
+    y->setParent(x);
 }
 
 void RB_BST::insert(RB_BST_Node* node){
@@ -302,8 +317,8 @@ int main(int argc, char const *argv[]){
         tree->insertValue(keys[i]);
     }
     tree->printTree(IN_ORDER);
-    RB_BST_Node* temp = tree->Search(11);
-    tree->LeftRotate(temp);
+    RB_BST_Node* temp = tree->Search(4);
+    tree->RightRotate(temp);
     cout << endl;
     tree->printTree(IN_ORDER);
     return 0;
