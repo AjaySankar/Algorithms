@@ -100,6 +100,7 @@ void RB_BST_Node::addRight(RB_BST_Node* node){
 class RB_BST{
     private:
         RB_BST_Node *root;
+        RB_BST_Node *nill;
     public:
         RB_BST();
         RB_BST(RB_BST_Node* node);
@@ -123,6 +124,8 @@ class RB_BST{
 
 RB_BST::RB_BST(){
     root = NULL;
+    nill = new RB_BST_Node();
+    nill->setColor('B');
 }
 
 void RB_BST::LeftRotate(RB_BST_Node* node){
@@ -144,7 +147,7 @@ void RB_BST::LeftRotate(RB_BST_Node* node){
 }
 
 void RB_BST::RightRotate(RB_BST_Node* node){
-// Right Rotation on a node assumes that its left child is not NULL
+    // Right Rotation on a node assumes that its left child is not NULL
     RB_BST_Node* y = node;
     RB_BST_Node* x = node->getLeft();
     y->addLeft(x->getRight());
@@ -168,6 +171,7 @@ void RB_BST::insert(RB_BST_Node* node){
     }
     if(!root){
         root = node;
+        root->setParent(nill);
         return;
     }
     RB_BST_Node* temp = root;
@@ -277,6 +281,8 @@ RB_BST_Node* RB_BST::getRoot(){
 
 void RB_BST::insertValue(int element){
     RB_BST_Node* node = new RB_BST_Node(element);
+    node->addLeft(nill);
+    node->addRight(nill);
     RB_BST::insert(node);
     if(node == root){
         root->setColor('B');
