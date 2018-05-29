@@ -178,7 +178,7 @@ void RB_BST::insert(RB_BST_Node* node){
     int element = node->getValue();
     while(1){
         if(element <= temp->getValue()){
-            if(temp->getLeft() == NULL){
+            if(temp->getLeft() == nill){
                 temp->addLeft(node); //if left of node is empty then insert node as left child
                 node->setParent(temp);
                 break;
@@ -188,7 +188,7 @@ void RB_BST::insert(RB_BST_Node* node){
             }
         }
         else{
-            if(temp->getRight() == NULL){
+            if(temp->getRight() == nill){
                 temp->addRight(node);//if right of node is empty then insert node as right child
                 node->setParent(temp);
                 break;
@@ -219,7 +219,7 @@ void RB_BST::printTree(Traversal_Type type){
 }
 
 void RB_BST::Inorder(RB_BST_Node* root){
-     if (root == NULL)
+     if (root == nill)
           return;
      /* first recur on left child */
      Inorder(root->getLeft());
@@ -232,7 +232,7 @@ void RB_BST::Inorder(RB_BST_Node* root){
 }
 
 void RB_BST::Preorder(RB_BST_Node* root){
-     if (root == NULL)
+     if (root == nill)
           return;
 
     /* then print the data of node */
@@ -246,7 +246,7 @@ void RB_BST::Preorder(RB_BST_Node* root){
 }
 
 void RB_BST::Postorder(RB_BST_Node* root){
-     if (root == NULL)
+     if (root == nill)
           return;
      /* first recur on left child */
      Postorder(root->getLeft());
@@ -260,7 +260,7 @@ void RB_BST::Postorder(RB_BST_Node* root){
 
 RB_BST_Node* RB_BST::Search(int value){
     RB_BST_Node* temp = root;
-    while(temp){
+    while(temp != nill){
         if(temp->getValue() < value){
             temp = temp->getRight();
         }
@@ -305,11 +305,11 @@ bool RB_BST::isRightChild(RB_BST_Node* parent,RB_BST_Node* child){
 
 
 bool RB_BST::hasLeftChild(RB_BST_Node* node){
-    return node->getLeft()!=NULL;
+    return node->getLeft()!=nill;
 }
 
 bool RB_BST::hasRightChild(RB_BST_Node* node){
-    return node->getRight()!=NULL;
+    return node->getRight()!=nill;
 }
 
 bool RB_BST::isLeaf(RB_BST_Node* node){
