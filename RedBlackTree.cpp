@@ -112,12 +112,17 @@ class RB_BST{
         void Postorder(RB_BST_Node* root);
         void LeftRotate(RB_BST_Node* node);
         void RightRotate(RB_BST_Node* node);
-        void RB_BST_Fixup(RB_BST_Node* node);
+        void RightLeftRotate(RB_BST_Node* node);
+        void LeftRightRotate(RB_BST_Node* node);
+        void CheckColor(RB_BST_Node* node);
+        void CorrectTree(RB_BST_Node* node);
+        void FixByRotation(RB_BST_Node* node);
         bool isLeaf(RB_BST_Node* node);
         bool hasLeftChild(RB_BST_Node* node);
         bool hasRightChild(RB_BST_Node* node);
         bool isLeftChild(RB_BST_Node* parent,RB_BST_Node* child);
         bool isRightChild(RB_BST_Node* parent,RB_BST_Node* child);
+        bool isNull(RB_BST_Node* node);
         RB_BST_Node* Search(int value);
         RB_BST_Node* getRoot();
 };
@@ -162,6 +167,16 @@ void RB_BST::RightRotate(RB_BST_Node* node){
         y->getParent()->addLeft(x);
     x->addRight(y);
     y->setParent(x);
+}
+
+void RB_BST::RightLeftRotate(RB_BST_Node* node){
+    RightRotate(node->getRight());
+    LeftRotate(node);
+}
+
+void RB_BST::LeftRightRotate(RB_BST_Node* node){
+    LeftRotate(node->getLeft());
+    RightRotate(node);
 }
 
 void RB_BST::insert(RB_BST_Node* node){
@@ -288,11 +303,78 @@ void RB_BST::insertValue(int element){
         root->setColor('B');
         return;
     }
-    RB_BST_Fixup(node);
+    CheckColor(node);
 }
 
-void RB_BST::RB_BST_Fixup(RB_BST_Node* node){
+void RB_BST::CheckColor(RB_BST_Node* node){
+    if(node == root)
+        return;
+    if(node->isRed() && node->getParent()->isRed()){
+        CorrectTree(node);
+    }
+    CheckColor(node->getParent());
+}
 
+void RB_BST::CorrectTree(RB_BST_Node* node){
+    if(isLeftChild(node->getParent(),node)){
+       if(isNull(node->getParent()->getParent()->getRight()) || 
+            node->getParent()->getParent()->getRight()->isBlack()) {
+           FixByRotation(node);
+           return;
+       }
+       if(!isNull(node->getParent()->getParent()->getRight())){
+           node->getParent()->getParent()->getRight()->setColor('B');
+       }
+       node->getParent()->getParent()->setColor('R');
+       node->getParent()->setColor('B');
+       return;
+    }
+    else{
+        if(isNull(node->getParent()->getParent()->getLeft()) || 
+            node->getParent()->getParent()->getLeft()->isBlack()) {
+           FixByRotation(node);
+           return;
+       }
+       if(!isNull(node->getParent()->getParent()->getLeft())){
+           node->getParent()->getParent()->getLeft()->setColor('B');
+       }
+       node->getParent()->getParent()->setColor('R');
+       node->getParent()->setColor('B');
+       return;
+    }
+}
+
+void RB_BST::FixByRotation(RB_BST_Node* node){
+    if(isLeftChild(node->getParent(),node)){
+        if(isLeftChild(node->getParent()->getParent(),node->getParent())){
+            RightRotate(node->getParent()->getParent());
+            node->setColor('R');
+            node->getParent()->setColor('R');
+            if(!isNull(node->getParent()->getRight()))
+                node->getParent()->getRight()->setColor('R');
+        }
+        else{
+            RightLeftRotate(node->getParent()->getParent());
+            node->setColor('B');
+            node->getLeft()->setColor('B');
+            node->getRight()->setColor('B');
+        }
+    }
+    else{
+        if(isRightChild(node->getParent()->getParent(),node->getParent())){
+            LeftRotate(node->getParent()->getParent());
+            node->setColor('R');
+            node->getParent()->setColor('R');
+            if(!isNull(node->getParent()->getLeft()))
+                node->getParent()->getLeft()->setColor('R');
+        }
+        else{
+            LeftRightRotate(node->getParent()->getParent());
+            node->setColor('B');
+            node->getRight()->setColor('B');
+            node->getLeft()->setColor('B');
+        }
+    }
 }
 
 bool RB_BST::isLeftChild(RB_BST_Node *parent,RB_BST_Node* child){
@@ -316,6 +398,10 @@ bool RB_BST::isLeaf(RB_BST_Node* node){
     return !(hasLeftChild(node) || hasRightChild(node));
 }
 
+bool RB_BST::isNull(RB_BST_Node* node){
+    return node == nill;
+}
+
 int main(int argc, char const *argv[]){
     RB_BST* tree = new RB_BST();
     int keys[14] = {7,4,11,3,6,9,18,2,14,19,12,17,22,20};
@@ -323,9 +409,9 @@ int main(int argc, char const *argv[]){
         tree->insertValue(keys[i]);
     }
     tree->printTree(IN_ORDER);
-    RB_BST_Node* temp = tree->Search(4);
+    /*RB_BST_Node* temp = tree->Search(4);
     tree->RightRotate(temp);
     cout << endl;
-    tree->printTree(IN_ORDER);
+    tree->printTree(IN_ORDER);*/
     return 0;
 }
