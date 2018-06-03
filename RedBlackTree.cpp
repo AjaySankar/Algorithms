@@ -138,10 +138,10 @@ void RB_BST::LeftRotate(RB_BST_Node* node){
     RB_BST_Node* x = node;
     RB_BST_Node* y = node->getRight();
     x->addRight(y->getLeft());
-    if(y->getLeft())
+    if(!isNull(y->getLeft()))
         y->getLeft()->setParent(x);
     y->setParent(x->getParent());
-    if(!x->getParent())
+    if(isNull(x->getParent()))
         root = y;
     else if(isLeftChild(x->getParent(),x))
         x->getParent()->addLeft(y);
@@ -156,10 +156,10 @@ void RB_BST::RightRotate(RB_BST_Node* node){
     RB_BST_Node* y = node;
     RB_BST_Node* x = node->getLeft();
     y->addLeft(x->getRight());
-    if(x->getRight())
+    if(!isNull(x->getRight()))
         x->getRight()->setParent(y);
     x->setParent(y->getParent());
-    if(!y->getParent())
+    if(isNull(y->getParent()))
         root = x;
     else if(isRightChild(y->getParent(),y))
         y->getParent()->addRight(x);
@@ -307,8 +307,10 @@ void RB_BST::insertValue(int element){
 }
 
 void RB_BST::CheckColor(RB_BST_Node* node){
-    if(node == root)
+    if(node == root){
+        root->setColor('B');
         return;
+    }
     if(node->isRed() && node->getParent()->isRed()){
         CorrectTree(node);
     }
@@ -316,9 +318,9 @@ void RB_BST::CheckColor(RB_BST_Node* node){
 }
 
 void RB_BST::CorrectTree(RB_BST_Node* node){
-    if(isLeftChild(node->getParent(),node)){
+    if(isLeftChild(node->getParent()->getParent(),node->getParent())){
        if(isNull(node->getParent()->getParent()->getRight()) || 
-            node->getParent()->getParent()->getRight()->isBlack()) {
+          node->getParent()->getParent()->getRight()->isBlack()) {
            FixByRotation(node);
            return;
        }
@@ -331,7 +333,7 @@ void RB_BST::CorrectTree(RB_BST_Node* node){
     }
     else{
         if(isNull(node->getParent()->getParent()->getLeft()) || 
-            node->getParent()->getParent()->getLeft()->isBlack()) {
+           node->getParent()->getParent()->getLeft()->isBlack()) {
            FixByRotation(node);
            return;
        }
@@ -349,30 +351,30 @@ void RB_BST::FixByRotation(RB_BST_Node* node){
         if(isLeftChild(node->getParent()->getParent(),node->getParent())){
             RightRotate(node->getParent()->getParent());
             node->setColor('R');
-            node->getParent()->setColor('R');
+            node->getParent()->setColor('B');
             if(!isNull(node->getParent()->getRight()))
                 node->getParent()->getRight()->setColor('R');
         }
         else{
             RightLeftRotate(node->getParent()->getParent());
             node->setColor('B');
-            node->getLeft()->setColor('B');
-            node->getRight()->setColor('B');
+            node->getLeft()->setColor('R');
+            node->getRight()->setColor('R');
         }
     }
     else{
         if(isRightChild(node->getParent()->getParent(),node->getParent())){
             LeftRotate(node->getParent()->getParent());
             node->setColor('R');
-            node->getParent()->setColor('R');
+            node->getParent()->setColor('B');
             if(!isNull(node->getParent()->getLeft()))
                 node->getParent()->getLeft()->setColor('R');
         }
         else{
             LeftRightRotate(node->getParent()->getParent());
             node->setColor('B');
-            node->getRight()->setColor('B');
-            node->getLeft()->setColor('B');
+            node->getRight()->setColor('R');
+            node->getLeft()->setColor('R');
         }
     }
 }
@@ -404,14 +406,17 @@ bool RB_BST::isNull(RB_BST_Node* node){
 
 int main(int argc, char const *argv[]){
     RB_BST* tree = new RB_BST();
-    int keys[14] = {7,4,11,3,6,9,18,2,14,19,12,17,22,20};
-    for(int i=0;i<14;i++){
+    int keys[7] = {3,1,5,7,6,8,9};//,10};//{7,4,11,3,6,9,18,2,14,19,12,17,22,20};
+    for(int i=0;i<7;i++){
         tree->insertValue(keys[i]);
     }
     tree->printTree(IN_ORDER);
-    /*RB_BST_Node* temp = tree->Search(4);
-    tree->RightRotate(temp);
     cout << endl;
-    tree->printTree(IN_ORDER);*/
+    for(int i=0;i<7;i++){
+        RB_BST_Node* temp = tree->Search(keys[i]);
+        cout << temp->getValue() << " " << temp->getColor() << " " <<
+                temp->getLeft()->getValue() << " " << temp->getLeft()->getColor() << " " <<
+                temp->getRight()->getValue() << " " << temp->getRight()->getColor() << endl;
+    }
     return 0;
 }
