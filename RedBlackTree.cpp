@@ -406,13 +406,13 @@ bool RB_BST::isNull(RB_BST_Node* node){
 
 int main(int argc, char const *argv[]){
     RB_BST* tree = new RB_BST();
-    int keys[7] = {3,1,5,7,6,8,9};//,10};//{7,4,11,3,6,9,18,2,14,19,12,17,22,20};
-    for(int i=0;i<7;i++){
+    int keys[8] = {3,1,5,7,6,8,9,10};
+    for(int i=0;i<8;i++){
         tree->insertValue(keys[i]);
     }
     tree->printTree(IN_ORDER);
     cout << endl;
-    for(int i=0;i<7;i++){
+    for(int i=0;i<8;i++){
         RB_BST_Node* temp = tree->Search(keys[i]);
         cout << temp->getValue() << " " << temp->getColor() << " " <<
                 temp->getLeft()->getValue() << " " << temp->getLeft()->getColor() << " " <<
