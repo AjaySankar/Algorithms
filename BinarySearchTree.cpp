@@ -132,6 +132,7 @@ bool BST::isRightChild(BST_Node* parent,BST_Node* child){
 }
 
 void BST::deleteNode(int element){
+    //Need to set proper parent pointers of all the nodes modifies in all the below cases
     BST_Node* node = new BST_Node();
     if((node = Search(element)) == NULL){
         cout << "Element to be deleted not found" << endl;
@@ -214,6 +215,39 @@ BST_Node* BST::getInorderSuccessor(int value){
     return succ;
 }
 
+int BST::getDepth(BST_Node* node){
+    //This method return the level of the node from root where root is at level 1
+    int level = 0;
+    BST_Node* temp = root;
+    while(temp){
+        level++;
+        if(temp->getValue() < node->getValue()){
+            temp = temp->getRight();
+        }
+        else if (temp->getValue() > node->getValue())
+        {   
+            temp = temp->getLeft();
+        }
+        else{
+            break;
+        }
+    }
+    return level;
+}
+
+BST_Node* BST::getLCA(BST_Node* node1,BST_Node* node2){
+    int level1 = getDepth(node1);
+    int level2 = getDepth(node2);
+    if(node1 == node2)
+        return node1;
+    if(node1->getParent() == node2->getParent())
+        return node1->getParent();
+    if(level1 > level2)
+        return getLCA(node1->getParent(),node2);
+    else
+        return getLCA(node1,node2->getParent());
+}
+
 void BST::printTree(Traversal_Type type){
     switch(type){
         case IN_ORDER:
@@ -271,7 +305,7 @@ void BST::Postorder(BST_Node* root){
      printf("%d ", root->getValue());  
 }
 
-/*int main(){
+int main(){
     BST *tree = new BST();
     tree->insertValue(15);
     tree->insertValue(6);
@@ -285,7 +319,9 @@ void BST::Postorder(BST_Node* root){
     tree->insertValue(13);
     tree->insertValue(9);
     tree->printTree(IN_ORDER);   cout << endl;
-    tree->deleteNode(15);
-    tree->printTree(IN_ORDER);   cout << endl;
+    //cout << "The level of the node is " << tree->getDepth(tree->Search(15));
+    cout << "The LCA is " << tree->getLCA(tree->Search(2),tree->Search(18))->getValue();
+    //tree->deleteNode(15);
+    //tree->printTree(IN_ORDER);   cout << endl;
     return 0;
-}*/
+}

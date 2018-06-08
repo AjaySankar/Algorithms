@@ -23,5 +23,7 @@ class BST{
         BST_Node* Search(int value);
         BST_Node* SearchForParent(int value);
         BST_Node* getInorderSuccessor(int value);
+        int getDepth(BST_Node* node);
+        BST_Node* getLCA(BST_Node* node1,BST_Node* node2);
         void deleteNode(int element);
 };
