@@ -347,9 +347,12 @@ void RB_BST::CorrectTree(RB_BST_Node* node){
     if(isLeftChild(node->getParent()->getParent(),node->getParent())){
        if(isNull(node->getParent()->getParent()->getRight()) || 
           node->getParent()->getParent()->getRight()->isBlack()) {
+            //if uncle is Black then fix by rotation
            FixByRotation(node);
            return;
        }
+       //if uncle is Red then fix by recolouring the nodes such that color parent and uncle to Black
+       //and color grand parent to Red and check any further violations from grand parent till root
        if(!isNull(node->getParent()->getParent()->getRight())){
            node->getParent()->getParent()->getRight()->setColor('B');
        }
@@ -358,11 +361,14 @@ void RB_BST::CorrectTree(RB_BST_Node* node){
        return;
     }
     else{
+        //uncle is left child to its parent
         if(isNull(node->getParent()->getParent()->getLeft()) || 
            node->getParent()->getParent()->getLeft()->isBlack()) {
+           //if uncle is Black then fix by rotation
            FixByRotation(node);
            return;
        }
+       //if uncle is red then fix by recolouring the nodes
        if(!isNull(node->getParent()->getParent()->getLeft())){
            node->getParent()->getParent()->getLeft()->setColor('B');
        }
@@ -375,6 +381,7 @@ void RB_BST::CorrectTree(RB_BST_Node* node){
 void RB_BST::FixByRotation(RB_BST_Node* node){
     if(isLeftChild(node->getParent(),node)){
         if(isLeftChild(node->getParent()->getParent(),node->getParent())){
+            //both node and its parent are left child of their parents
             RightRotate(node->getParent()->getParent());
             node->setColor('R');
             node->getParent()->setColor('B');
@@ -382,6 +389,7 @@ void RB_BST::FixByRotation(RB_BST_Node* node){
                 node->getParent()->getRight()->setColor('R');
         }
         else{
+            //node is left child but parent is right child
             RightLeftRotate(node->getParent()->getParent());
             node->setColor('B');
             node->getLeft()->setColor('R');
@@ -390,6 +398,7 @@ void RB_BST::FixByRotation(RB_BST_Node* node){
     }
     else{
         if(isRightChild(node->getParent()->getParent(),node->getParent())){
+            //both node and parent are right child to their parents
             LeftRotate(node->getParent()->getParent());
             node->setColor('R');
             node->getParent()->setColor('B');
@@ -397,6 +406,7 @@ void RB_BST::FixByRotation(RB_BST_Node* node){
                 node->getParent()->getLeft()->setColor('R');
         }
         else{
+            //node is right child and parent is left child
             LeftRightRotate(node->getParent()->getParent());
             node->setColor('B');
             node->getRight()->setColor('R');
