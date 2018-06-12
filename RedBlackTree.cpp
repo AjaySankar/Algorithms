@@ -128,6 +128,7 @@ class RB_BST{
         RB_BST_Node* getMinimum(RB_BST_Node* node);
         int getMinVal();
         RB_BST_Node* getInorderSuccessor(RB_BST_Node* node);
+        void deleteNode(int value);
 };
 
 RB_BST::RB_BST(){
@@ -149,7 +150,7 @@ int RB_BST::getMinVal(){
 
 RB_BST_Node* RB_BST::getInorderSuccessor(RB_BST_Node* node){
     if(!isNull(node->getRight())){
-        return getMinimum(node);
+        return getMinimum(node->getRight());
     }
     RB_BST_Node* parent = node->getParent();
     while(!isNull(parent) && isRightChild(parent,node)){
@@ -423,7 +424,6 @@ bool RB_BST::isRightChild(RB_BST_Node* parent,RB_BST_Node* child){
     return hasRightChild(parent) && parent->getRight() == child;
 }
 
-
 bool RB_BST::hasLeftChild(RB_BST_Node* node){
     return node->getLeft()!=nill;
 }
@@ -440,16 +440,44 @@ bool RB_BST::isNull(RB_BST_Node* node){
     return node == nill;
 }
 
+void RB_BST::deleteNode(int value){
+    RB_BST_Node* node;
+    if(isNull(node = Search(value)))
+        return;
+    if(!isNull(node->getLeft()) && !isNull(node->getRight())){
+        RB_BST_Node* succ = getInorderSuccessor(node);
+        node->setValue(succ->getValue());
+        node = succ;
+    }
+    if(!isNull(node->getLeft()) && !isNull(node->getRight())){
+        cout << "Oops!! This should not happen as inorder successor should have one or zero child" << endl;
+        return;
+    }
+    if(node->isRed()){
+        if(isLeaf(node)){
+            isLeftChild(node->getParent(),node) ? node->getParent()->addLeft(nill):
+                                                  node->getParent()->addRight(nill);
+            return;
+        }
+    }
+    return;
+}
+
 int main(int argc, char const *argv[]){
     RB_BST* tree = new RB_BST();
-    int keys[8] = {3,1,5,7,6,8,9,10};
+    int keys[8] = {10,5,30,2,7,20,38,35};//{3,1,5,7,6,8,9,10};
     for(int i=0;i<8;i++){
         tree->insertValue(keys[i]);
     }
     tree->printTree(IN_ORDER);
     cout << endl;
+    tree->deleteNode(30);
+    tree->printTree(IN_ORDER);
+    cout << endl;
     for(int i=0;i<8;i++){
         RB_BST_Node* temp = tree->Search(keys[i]);
+        if(tree->isNull(temp))
+            continue;
         cout << temp->getValue() << " " << temp->getColor() << " " <<
                 temp->getLeft()->getValue() << " " << temp->getLeft()->getColor() << " " <<
                 temp->getRight()->getValue() << " " << temp->getRight()->getColor() << endl;
