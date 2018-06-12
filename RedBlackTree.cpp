@@ -125,12 +125,38 @@ class RB_BST{
         bool isNull(RB_BST_Node* node);
         RB_BST_Node* Search(int value);
         RB_BST_Node* getRoot();
+        RB_BST_Node* getMinimum(RB_BST_Node* node);
+        int getMinVal();
+        RB_BST_Node* getInorderSuccessor(RB_BST_Node* node);
 };
 
 RB_BST::RB_BST(){
     root = NULL;
     nill = new RB_BST_Node();
     nill->setColor('B');
+}
+
+RB_BST_Node* RB_BST::getMinimum(RB_BST_Node* node){
+    while(!isNull(node->getLeft())){
+        node = node->getLeft();
+    }
+    return node;
+}
+
+int RB_BST::getMinVal(){
+    return getMinimum(root)->getValue();
+}
+
+RB_BST_Node* RB_BST::getInorderSuccessor(RB_BST_Node* node){
+    if(!isNull(node->getRight())){
+        return getMinimum(node);
+    }
+    RB_BST_Node* parent = node->getParent();
+    while(!isNull(parent) && isRightChild(parent,node)){
+        node = parent;
+        parent = parent->getParent();
+    }
+    return parent;
 }
 
 void RB_BST::LeftRotate(RB_BST_Node* node){
