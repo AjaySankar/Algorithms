@@ -24,6 +24,7 @@ class RB_BST_Node{
         void addRight(RB_BST_Node* node);
         char getColor();
         void setColor(char c);
+        void addExtraBlack();
         bool isRed();
         bool isBlack();
 };
@@ -57,12 +58,19 @@ void RB_BST_Node::setColor(char c){
     return;
 }
 
+void RB_BST_Node::addExtraBlack(){
+    if(isRed())
+        color = 'r';    //red black node
+    else
+        color = 'b';    //double black node
+}
+
 bool RB_BST_Node::isRed(){
     return color=='R';
 }
 
 bool RB_BST_Node::isBlack(){
-    return color=='B';
+    return color=='B'|| color=='r' || color=='b';
 }
 
 void RB_BST_Node::setValue(int element){
@@ -129,6 +137,7 @@ class RB_BST{
         int getMinVal();
         RB_BST_Node* getInorderSuccessor(RB_BST_Node* node);
         void deleteNode(int value);
+        void deleteFixup(RB_BST_Node* x);
 };
 
 RB_BST::RB_BST(){
@@ -441,26 +450,92 @@ bool RB_BST::isNull(RB_BST_Node* node){
 }
 
 void RB_BST::deleteNode(int value){
-    RB_BST_Node* node;
-    if(isNull(node = Search(value)))
+    RB_BST_Node *z,*y,*x;
+    if(isNull(z = Search(value)))
         return;
-    if(!isNull(node->getLeft()) && !isNull(node->getRight())){
-        RB_BST_Node* succ = getInorderSuccessor(node);
-        node->setValue(succ->getValue());
-        node = succ;
+    if(isNull(z->getLeft()) || isNull(z->getRight()))
+        y = z;
+    else
+        y = getInorderSuccessor(z);
+    if(!isNull(y->getLeft()))
+        x = y->getLeft();
+    else
+        x = y->getRight();
+    x->setParent(y->getParent());
+    if(isNull(y->getParent()))
+        root = x;
+    else{
+        if(isLeftChild(y->getParent(),y))
+            y->getParent()->addLeft(x);
+        else
+            y->getParent()->addRight(x);
     }
-    if(!isNull(node->getLeft()) && !isNull(node->getRight())){
-        cout << "Oops!! This should not happen as inorder successor should have one or zero child" << endl;
-        return;
+    if(y != z)
+        z->setValue(y->getValue());
+    if(y->isBlack()){
+        deleteFixup(x);
+        x->addExtraBlack();
     }
-    if(node->isRed()){
-        if(isLeaf(node)){
-            isLeftChild(node->getParent(),node) ? node->getParent()->addLeft(nill):
-                                                  node->getParent()->addRight(nill);
-            return;
+}
+
+void RB_BST::deleteFixup(RB_BST_Node* x){
+    while(x!=root && x->isBlack()){
+        RB_BST_Node* w;
+        if(isLeftChild(x->getParent(),x)){
+            w = x->getParent()->getRight();
+            if(w->isRed()){ //Case 1  x's silbling w is red
+                w->setColor('B');
+                x->getParent()->setColor('R');
+                LeftRotate(x->getParent());
+                w = x->getParent()->getRight();
+            }
+            if(w->getLeft()->isBlack() && w->getRight()->isBlack()){    //Case 2 x's sibling w is black and both of w's children are black
+                w->setColor('R');
+                x = x->getParent();
+            }
+            else{
+                if(w->getRight()->isBlack()){   //Case 3  x's sibling w is black and w's left child is red and w's right child is black
+                    w->getLeft()->setColor('B');
+                    w->setColor('R');
+                    RightRotate(w);
+                    w = x->getParent()->getRight();
+                }
+                //Case 4  x's sibling w is black and w's right child is red
+                w->setColor(x->getParent()->getColor());
+                x->getParent()->setColor('B');
+                w->getRight()->setColor('B');
+                LeftRotate(x->getParent());
+                x = root;
+            }
+        }
+        else{
+            w = x->getParent()->getLeft();
+            if(w->isRed()){
+                w->setColor('B');
+                x->getParent()->setColor('R');
+                RightRotate(x->getParent());
+                w = x->getParent()->getLeft();
+            }
+            if(w->getRight()->isBlack() && w->getLeft()->isBlack()){
+                w->setColor('R');
+                x = x->getParent();
+            }
+            else{
+                if(w->getLeft()->isBlack()){
+                    w->getRight()->setColor('B');
+                    w->setColor('R');
+                    LeftRotate(w);
+                    w = x->getParent()->getLeft();
+                }
+                w->setColor(x->getParent()->getColor());
+                x->getParent()->setColor('B');
+                w->getRight()->setColor('B');
+                RightRotate(x->getParent());
+                x = root;
+            }            
         }
     }
-    return;
+    x->setColor('B');
 }
 
 int main(int argc, char const *argv[]){
