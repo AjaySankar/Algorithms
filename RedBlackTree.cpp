@@ -25,6 +25,7 @@ class RB_BST_Node{
         char getColor();
         void setColor(char c);
         void addExtraBlack();
+        void removeExtraBlack();
         bool isRed();
         bool isBlack();
 };
@@ -65,12 +66,19 @@ void RB_BST_Node::addExtraBlack(){
         color = 'b';    //double black node
 }
 
+void RB_BST_Node::removeExtraBlack(){
+    if(color == 'r')
+        color = 'R';
+    if(color == 'b')
+        color = 'B';
+}
+
 bool RB_BST_Node::isRed(){
-    return color=='R';
+    return color=='R' || color=='r'/*red black node*/;
 }
 
 bool RB_BST_Node::isBlack(){
-    return color=='B'|| color=='r' || color=='b';
+    return color=='B' || color=='b'/* double black node*/;
 }
 
 void RB_BST_Node::setValue(int element){
@@ -473,8 +481,8 @@ void RB_BST::deleteNode(int value){
     if(y != z)
         z->setValue(y->getValue());
     if(y->isBlack()){
-        deleteFixup(x);
         x->addExtraBlack();
+        deleteFixup(x);
     }
 }
 
@@ -491,7 +499,9 @@ void RB_BST::deleteFixup(RB_BST_Node* x){
             }
             if(w->getLeft()->isBlack() && w->getRight()->isBlack()){    //Case 2 x's sibling w is black and both of w's children are black
                 w->setColor('R');
+                x->removeExtraBlack();
                 x = x->getParent();
+                x->addExtraBlack();
             }
             else{
                 if(w->getRight()->isBlack()){   //Case 3  x's sibling w is black and w's left child is red and w's right child is black
@@ -505,6 +515,7 @@ void RB_BST::deleteFixup(RB_BST_Node* x){
                 x->getParent()->setColor('B');
                 w->getRight()->setColor('B');
                 LeftRotate(x->getParent());
+                x->removeExtraBlack();
                 x = root;
             }
         }
@@ -518,7 +529,9 @@ void RB_BST::deleteFixup(RB_BST_Node* x){
             }
             if(w->getRight()->isBlack() && w->getLeft()->isBlack()){
                 w->setColor('R');
+                x->removeExtraBlack();
                 x = x->getParent();
+                x->addExtraBlack();
             }
             else{
                 if(w->getLeft()->isBlack()){
@@ -531,6 +544,7 @@ void RB_BST::deleteFixup(RB_BST_Node* x){
                 x->getParent()->setColor('B');
                 w->getRight()->setColor('B');
                 RightRotate(x->getParent());
+                x->removeExtraBlack();
                 x = root;
             }            
         }
