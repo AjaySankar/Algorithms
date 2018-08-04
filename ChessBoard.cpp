@@ -2,6 +2,7 @@
 #include<bits/stdc++.h>
 #define N 5
 #define MIN INT16_MIN
+#define EMPTY '-'
 using namespace std;
 
 int UP[N+1][N+1] = {
@@ -35,15 +36,55 @@ int cache[N+1][N+1] = {
     {MIN,MIN,MIN,MIN,MIN,MIN},
     {MIN,MIN,MIN,MIN,MIN,MIN},
     {MIN,MIN,MIN,MIN,MIN,MIN},
-    {MIN,MIN,MIN,MIN,MIN,MIN},
+    {MIN,MIN,MIN,MIN,MIN,MIN}
+};
+
+char path[N+1][N+1] = {
+    {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+    {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+    {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+    {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+    {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+    {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY}
 };
 
 void printMatrix(){
     for(int i=1;i<N+1;i++){
         for(int j=1;j<N+1;j++){
-           cout << cache[i][j] << " "; 
+           cout << path[i][j] << " "; 
         }
         cout << endl;
+    }
+}
+
+void updatePath(int max,int up,int tl,int tr, int x, int y){
+    if(max == up)
+        path[x][y] = 'U';
+    else if(max == tl)
+        path[x][y] = 'L';
+    else if(max == tr)
+        path[x][y] = 'R';
+    else
+        path[x][y] = '-';
+}
+
+void printPath(int x,int y){
+    if(x == N)
+        return;
+    char direction = path[x][y];
+    switch(direction){
+        case 'U':
+                    cout << x << " " << y << " ==> " << x+1 << " " << y << " With profit: " << UP[x][y] << endl;
+                    printPath(x+1,y);
+                    break;
+        case 'L':
+                    cout << x << " " << y << " ==> " << x+1 << " " << y-1 << " With profit: " << TopLeft[x][y] << endl;
+                    printPath(x+1,y-1);
+                    break;
+        case 'R':
+                    cout << x << " " << y << " ==> " << x+1 << " " << y+1 << " With profit: " << TopRight[x][y] << endl;
+                    printPath(x+1,y+1);
+                    break;
     }
 }
 
@@ -61,17 +102,18 @@ int getDollarsByOneStep(int cProfit,int stepValue){
 }
 
 int getMaxProfit(int x,int y){
-    cout << "Reached top " << x << " " << y << endl;
     if(cache[x][y] != MIN)
         return cache[x][y];
     if(x == N-1){
         cache[x][y] = getMaxDollars(UP[x][y],TopLeft[x][y],TopRight[x][y]);
+        updatePath(cache[x][y],UP[x][y],TopLeft[x][y],TopRight[x][y],x,y);
     }
     else{
       int upProfit = getDollarsByOneStep(getMaxProfit(x+1,y),UP[x][y]);
       int topLeftProfit = y == 1 ?   MIN : getDollarsByOneStep(getMaxProfit(x+1,y-1),TopLeft[x][y]);
       int topRightProfit = y == N ?   MIN : getDollarsByOneStep(getMaxProfit(x+1,y+1),TopRight[x][y]);
       cache[x][y] = getMaxDollars(upProfit,topLeftProfit,topRightProfit);
+      updatePath(cache[x][y],upProfit,topLeftProfit,topRightProfit,x,y);
     }
     
     return cache[x][y];
@@ -79,6 +121,7 @@ int getMaxProfit(int x,int y){
 
 int main(){
     cout << "Maximum Profit is " << getMaxProfit(1,1) << endl;
-    printMatrix();
+    //printMatrix();
+    printPath(1,1);
     return 0;
 }
