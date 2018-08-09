@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>JavaScript Objects</h2>
+
+<p id="demo"></p>
+
+<script>
+// Create an object:
+var ProcessTable = {
+    1	: {
+    		processTime: 2,
+            profit: 60,
+            deadline: 4
+    },
+
+    2	: {
+    		processTime: 1,
+            profit: 40,
+            deadline: 2
+    },
+
+    3	: {
+    		processTime: 2,
+            profit: 20,
+            deadline: 3
+    }
+};
+
+var pidList = Object.keys(ProcessTable);
+
+function getProcessingTime(pid){
+	return ProcessTable[pid]["processTime"];
+}
+function getProcessProfit(pid){
+  return ProcessTable[pid]["profit"];
+}
+function getProcessDeadline(pid){
+  return ProcessTable[pid]["deadline"];
+}
+
+function getProfitByProcessExecution(pid,timeStamp){
+  if(getProcessingTime(pid) + timeStamp <= getProcessDeadline(pid))
+		return getProcessProfit(pid);
+	return 0;
+}
+
+function GetMaxProfit(ProcessArray,TimeMark){
+  console.log(ProcessArray.join(',')+"  at "+TimeMark);
+  //console.log("  at "+TimeMark);
+	if(ProcessArray.length == 1){
+		return getProfitByProcessExecution(ProcessArray[0],TimeMark);
+	}
+  let max = -32768;
+	for(let process of ProcessArray){
+    let processProfit = getProfitByProcessExecution(process,TimeMark);
+    let duplicate = ProcessArray.slice();
+    let index = duplicate.indexOf(process);
+    if (index > -1) {
+      duplicate.splice(index, 1);
+    }
+		let subProblemProfit = GetMaxProfit(duplicate,TimeMark+getProcessingTime(process))+processProfit;
+		if(subProblemProfit > max){
+      max = subProblemProfit;
+    }
+  }
+	return max;
+}
+
+document.getElementById("demo").innerHTML = GetMaxProfit(pidList,0);
+</script>
+
+</body>
+</html>
