@@ -49,10 +49,19 @@ char path[N+1][N+1] = {
     {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY}
 };
 
+int table[N+1][N+1] = {
+    {MIN,MIN,MIN,MIN,MIN,MIN},
+    {MIN,MIN,MIN,MIN,MIN,MIN},
+    {MIN,MIN,MIN,MIN,MIN,MIN},
+    {MIN,MIN,MIN,MIN,MIN,MIN},
+    {MIN,MIN,MIN,MIN,MIN,MIN},
+    {MIN,0,0,0,0,0}
+};
+
 void printMatrix(){
     for(int i=1;i<N+1;i++){
         for(int j=1;j<N+1;j++){
-           cout << path[i][j] << " "; 
+           cout << cache[i][j] << " "; 
         }
         cout << endl;
     }
@@ -102,7 +111,10 @@ int getDollarsByOneStep(int cProfit,int stepValue){
         return cProfit+stepValue;
 }
 
-int getMaxProfit(int x,int y){
+int getMaxProfitMemoriztion(int x,int y){
+    /* This function only calculates the subproblems needed to get from x,y coordinates to top row of the board
+    Print the cache matrix and see that few cells are empty as they are the subproblems NOT involved in finding the
+    path from the particular x,y coordinates */
     if(cache[x][y] != MIN)
         return cache[x][y];
     if(x == N-1){
@@ -110,9 +122,9 @@ int getMaxProfit(int x,int y){
         updatePath(cache[x][y],UP[x][y],TopLeft[x][y],TopRight[x][y],x,y);
     }
     else{
-      int upProfit = getDollarsByOneStep(getMaxProfit(x+1,y),UP[x][y]);
-      int topLeftProfit = y == 1 ?   MIN : getDollarsByOneStep(getMaxProfit(x+1,y-1),TopLeft[x][y]);
-      int topRightProfit = y == N ?   MIN : getDollarsByOneStep(getMaxProfit(x+1,y+1),TopRight[x][y]);
+      int upProfit = getDollarsByOneStep(getMaxProfitMemoriztion(x+1,y),UP[x][y]);
+      int topLeftProfit = y == 1 ?   MIN : getDollarsByOneStep(getMaxProfitMemoriztion(x+1,y-1),TopLeft[x][y]);
+      int topRightProfit = y == N ?   MIN : getDollarsByOneStep(getMaxProfitMemoriztion(x+1,y+1),TopRight[x][y]);
       cache[x][y] = getMaxDollars(upProfit,topLeftProfit,topRightProfit);
       updatePath(cache[x][y],upProfit,topLeftProfit,topRightProfit,x,y);
     }
@@ -120,9 +132,27 @@ int getMaxProfit(int x,int y){
     return cache[x][y];
 }
 
+int getMaxProfitByTabulation(int x,int y){
+    /* This function completly fills the complete table and calculates all possible subproblems from 
+    all possible initial x,y configurations and thus once the table is filled, we can use the same 
+    table for other paths from other values of x,y */
+    for(int i=N-1;i>0;i--){
+        for(int j=1;j<=N;j++){
+            int upProfit = getDollarsByOneStep(table[i+1][j],UP[i][j]);
+            int topLeftProfit = j == 1 ?   MIN : getDollarsByOneStep(table[i+1][j-1],TopLeft[i][j]);
+            int topRightProfit = j == N ?   MIN : getDollarsByOneStep(table[i+1][j+1],TopRight[i][j]);
+            table[i][j] = getMaxDollars(upProfit,topLeftProfit,topRightProfit);
+            updatePath(table[i][j],upProfit,topLeftProfit,topRightProfit,i,j);
+        }
+    }
+    printPath(x,y);
+    return table[x][y];
+}
+
 int main(){
-    cout << "Maximum Profit is " << getMaxProfit(1,1) << endl;
+    cout << "Maximum Profit is " << getMaxProfitMemoriztion(1,1) << endl;
     //printMatrix();
     printPath(1,1);
+    cout << "Maximum Profit is " << getMaxProfitByTabulation(1,1);
     return 0;
 }
