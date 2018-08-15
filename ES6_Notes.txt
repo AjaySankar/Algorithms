@@ -1,0 +1,491 @@
+let & const vs var:
+
+In JavaScript, the variables declared with 'var' keyword are function scoped.
+The variables declared with 'let' & 'const' are block scoped.
+'let' are variables 'var' variables with block scoped.
+'const' are 'let' variables whose values cannot be changed.
+
+var x = 3;
+function func(randomize) {
+    if (randomize) {
+        var x = Math.random(); // (A) scope: whole function
+        return x;
+    }
+    return x; // accesses the x from line A
+}
+func(false); // undefined
+
+IIFE - Immediately invoked function expressions
+
+function definition:
+	function doSomething(){	
+		//function definition
+	}
+	doSomething();	//function invoked
+
+var doSomething = function(){
+	//function expression
+}
+	doSomething();	//function invoked
+	
+(function(){})();	//IIFE function
+
+The first () that enclose the function definition make sure that it is function expression and javacript doesnot throw any error.
+The second() immediately invoke the function.
+IIFE are used to give block scope to a variables in ES5. So that the variables will not be available outside the block, and no one can access them as they are in a function without any name.
+
+But in ES6 there is no need to have IIFE because we have 'let' to restrict variable scope to a block.
+
+Object and array destructring.
+
+Object:
+	function selectEntries({start,end,step}){console.log(start,end,step);}
+	selectEntries({start:1,end:2,step:3});
+Array:
+	function selectEntries([start,end,step]){console.log(start,end,step);}
+	selectEntries([1,2,3]);
+
+Default values in function parameters:
+	In ES5, you specify default values for parameters like this:
+
+function foo(x, y) {
+    x = x || 0;
+    y = y || 0;
+    ···
+}
+ES6 has nicer syntax:
+
+function foo(x=0, y=0) {
+    ···
+}
+An added benefit is that in ES6, a parameter default value is only triggered by undefined, while it is triggered by any falsy value in the previous ES5 code.
+
+From arguments to rest parameters
+If the function needs to accept variable number of arguments.
+function logAll(){for(const elem of arguments){console.log(elem);}}
+logAll('a','b','c');	//works
+logAll('a','b');	//works
+
+function logAllArguments(...args) {
+    for (const arg of args) {
+        console.log(arg);
+    }
+}
+
+Spread parameter:
+This is used to convert array into parameters.
+Math.max.apply(Math, [-1, 5, 11, 3]) in ES5 vs Math.max(...[-1, 5, 11, 3]) in ES6.
+arr1.push.apply(arr1, arr2); in ES5 vs arr1.push(...arr2);
+
+
+Rest operator:
+The rest parameter syntax allows us to represent an indefinite number of arguments as an ARRAY.
+function f(a, b, ...theArgs) {
+  // ...
+}
+
+There are three main differences between rest parameters and the arguments object:
+
+rest parameters are only the ones that haven't been given a separate name (i.e. formally defined in function expression), while the arguments object contains all arguments passed to the function;
+
+the arguments object is not a real array, while rest parameters are Array instances, meaning methods like sort, map, forEach or pop can be applied on it directly;
+
+the arguments object has additional functionality specific to itself (like the callee property).
+
+// Before rest parameters, the following could be found:
+function f(a, b) {
+  var args = Array.prototype.slice.call(arguments, f.length);	//convert arguments passed to array
+
+  // …
+}
+
+// to be equivalent of
+
+function f(a, b, ...args) {
+  
+}
+function multiply(multiplier, ...theArgs) {
+  return theArgs.map(function(element) {
+    return multiplier * element;
+  });
+}
+
+var arr = multiply(2, 1, 2, 3); 
+console.log(arr); // [2, 4, 6]
+
+Base class:
+class Person {
+    constructor(name) {
+        this.name = name;
+    }
+    describe() {
+        return 'Person called '+this.name;
+    }
+}
+
+versus
+
+function Person(name) {
+    this.name = name;
+}
+Person.prototype.describe = function () {
+    return 'Person called '+this.name;
+};
+
+Derived class:
+function Employee(name, title) {
+    Person.call(this, name); // super(name)
+    this.title = title;
+}
+Employee.prototype = Object.create(Person.prototype);	//Inherit properties from Person constructor class and setting up prototype chain
+Employee.prototype.constructor = Employee;	//Without this line Employee.prototype.constructor will point to Person constructor and so getting original constructor back
+Employee.prototype.describe = function () {
+    return Person.prototype.describe.call(this) // super.describe()
+           + ' (' + this.title + ')';
+};
+
+versus
+
+class Employee extends Person {
+    constructor(name, title) {
+        super(name);
+        this.title = title;
+    }
+    describe() {
+        return super.describe() + ' (' + this.title + ')';
+    }
+}
+
+From Array.prototype.slice() to Array.from()
+
+var arr1 = Array.prototype.slice.call(arguments); // ES5
+const arr2 = Array.from(arguments); or const arr2 = [...arguments];// ES6
+
+From apply() to Array.prototype.fill()
+
+var arr1 = Array.apply(null, new Array(2)); vs const arr2 = new Array(2).fill(undefined);// [undefined, undefined]// ES5
+
+const arr4 = new Array(2).fill('x'); // ES6
+
+String interpolation:
+const first = 'Jane';
+const last = 'Doe';
+console.log(`Hello ${first} ${last}!`);	// Hello Jane Doe!
+
+Iterable strings : const chars = [...'abc']; //Spread operator converts to array ['a', 'b', 'c']
+
+Spec detail: changing a const variable always throws a TypeError
+const foo = 'abc';
+foo = 'def'; // TypeError
+
+const only means that a variable always has the same value, but it does not mean that the value itself is or becomes immutable. For example, obj is a constant, but the value it points to is mutable – we can add a property to it:
+
+const obj = {};
+obj.prop = 123;
+console.log(obj.prop); // 123
+We cannot, however, assign a different value to obj:
+
+obj = {}; // TypeError 	
+
+Once a const variable has been created, it can’t be changed. But that doesn’t mean that you can’t re-enter its scope and start fresh, with a new value. For example, via a loop:
+
+function logArgs(...args) {
+    for (const [index, elem] of args.entries()) { // (A)
+        const message = index + '. ' + elem; // (B)
+        console.log(message);
+    }
+}
+logArgs('Hello', 'everyone');
+
+// Output:
+// 0. Hello
+// 1. everyone
+There are two const declarations in this code, in line A and in line B. And during each loop iteration, their constants have different values.
+
+A variable declared by let or const has a so-called temporal dead zone (TDZ): When entering its scope, it can’t be accessed (got or set) until execution reaches the declaration. Let’s compare the life cycles of var-declared variables (which don’t have TDZs) and let-declared variables (which have TDZs).
+
+9.4.1 The life cycle of var-declared variables 
+var variables don’t have temporal dead zones. Their life cycle comprises the following steps:
+
+When the scope (its surrounding function) of a var variable is entered, storage space (a binding) is created for it. The variable is immediately initialized, by setting it to undefined.
+When the execution within the scope reaches the declaration, the variable is set to the value specified by the initializer (an assignment) – if there is one. If there isn’t, the value of the variable remains undefined.
+9.4.2 The life cycle of let-declared variables 
+Variables declared via let have temporal dead zones and their life cycle looks like this:
+
+When the scope (its surrounding block) of a let variable is entered, storage space (a binding) is created for it. The variable remains uninitialized.
+Getting or setting an uninitialized variable causes a ReferenceError.
+When the execution within the scope reaches the declaration, the variable is set to the value specified by the initializer (an assignment) – if there is one. If there isn’t then the value of the variable is set to undefined.
+const variables work similarly to let variables, but they must have an initializer (i.e., be set to a value immediately) and can’t be changed.
+
+9.4.3 Examples 
+Within a TDZ, an exception is thrown if a variable is got or set:
+
+let tmp = true;
+if (true) { // enter new scope, TDZ starts
+    // Uninitialized binding for `tmp` is created
+    console.log(tmp); // ReferenceError
+
+    let tmp; // TDZ ends, `tmp` is initialized with `undefined`
+    console.log(tmp); // undefined
+
+    tmp = 123;
+    console.log(tmp); // 123
+}
+console.log(tmp); // true
+If there is an initializer then the TDZ ends after the initializer was evaluated and the result was assigned to the variable:
+
+let foo = console.log(foo); // ReferenceError
+The following code demonstrates that the dead zone is really temporal (based on time) and not spatial (based on location):
+
+if (true) { // enter new scope, TDZ starts
+    const func = function () {
+        console.log(myVar); // OK!
+    };
+
+    // Here we are within the TDZ and
+    // accessing `myVar` would cause a `ReferenceError`
+
+    let myVar = 3; // TDZ ends
+    func(); // called outside TDZ
+}
+
+var-declaring a variable in the head of a for loop creates a single binding (storage space) for that variable:
+
+const arr = [];
+for (var i=0; i < 3; i++) {
+    arr.push(() => i);	//pushes entire function definition
+}
+arr.map(x => x()); // [3,3,3]
+Every i in the bodies of the three arrow functions refers to the same binding, which is why they all return the same value.
+
+If you let-declare a variable, a new binding is created for each loop iteration:
+
+const arr = [];
+for (let i=0; i < 3; i++) {
+    arr.push(() => i);
+}
+arr.map(x => x()); // [0,1,2]
+This time, each i refers to the binding of one specific iteration and preserves the value that was current at that time. Therefore, each arrow function returns a different value.
+
+Both let and const can be used as loop iterator variable, their bindings are created for each iteration seperately.
+There is a catch, let variable can be changed in the loop once initialized but const cannot be changed once initialized.
+
+9.5.3 Why are per-iteration bindings useful? 
+The following is an HTML page that displays three links:
+
+If you click on “yes”, it is translated to “ja”.
+If you click on “no”, it is translated to “nein”.
+If you click on “perhaps”, it is translated to “vielleicht”.
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div id="content"></div>
+    <script>
+        const entries = [
+            ['yes', 'ja'],
+            ['no', 'nein'],
+            ['perhaps', 'vielleicht'],
+        ];
+        const content = document.getElementById('content');
+        for (const [source, target] of entries) { // (A)
+            content.insertAdjacentHTML('beforeend',
+                `<div><a id="${source}" href="">${source}</a></div>`);
+            document.getElementById(source).addEventListener(
+                'click', (event) => {
+                    event.preventDefault();
+                    alert(target); // (B)
+                });
+        }
+    </script>
+</body>
+</html>
+What is displayed depends on the variable target (line B). If we had used var instead of const in line A, there would be a single binding for the whole loop and target would have the value 'vielleicht', afterwards. Therefore, no matter what link you click on, you would always get the translation 'vielleicht'.
+
+Thankfully, with const, we get one binding per loop iteration and the translations are displayed correctly.
+
+If parameters have default values, they are treated like a sequence of let statements and are subject to temporal dead zones:
+
+// OK: `y` accesses `x` after it has been declared
+function foo(x=1, y=x) {
+    return [x, y];
+}
+foo(); // [1,1]
+
+// Exception: `x` tries to access `y` within TDZ
+function bar(x=y, y=2) {
+    return [x, y];
+}
+bar(); // ReferenceError
+
+
+The scope of parameter default values is separate from the scope of the body (the former surrounds the latter). That means that methods or functions defined “inside” parameter default values don’t see the local variables of the body:
+
+const foo = 'outer';
+function bar(func = () => foo) {
+    const foo = 'inner';
+    console.log(func()); // outer
+}
+bar();
+
+Function declarations…
+
+are block-scoped, like let.
+are hoisted: independently of where a function declaration is mentioned in its scope, it is always created at the beginning of the scope.
+The following code demonstrates the hoisting of function declarations:
+
+{ // Enter a new scope
+
+    console.log(foo()); // OK, due to hoisting
+    function foo() {
+        return 'hello';
+    }
+}
+Class declarations…
+
+are block-scoped.
+don’t create properties on the global object.
+are not hoisted.
+
+Destructuring object:
+const arr = ['a', 'b'];
+for (const [index, element] of arr.entries()) {
+    console.log(index, element);
+}
+// Output:
+// 0 a
+// 1 b
+
+Destructuring objects:
+
+const obj = { first: 'Jane', last: 'Doe' };
+const {first: f, last: l} = obj;
+    // f = 'Jane'; l = 'Doe'
+
+// {prop} is short for {prop: prop}
+const {first, last} = obj;
+    // first = 'Jane'; last = 'Doe'
+	
+Array destructuring (works for all iterable values):
+
+const iterable = ['a', 'b'];
+const [x, y] = iterable;
+    // x = 'a'; y = 'b'
+	
+If you destructure an object, you mention only those properties that you are interested in:
+
+const { x: x } = { x: 7, y: 3 }; // x = 7
+If you destructure an Array, you can choose to only extract a prefix:
+
+const [x,y] = ['a', 'b', 'c']; // x='a'; y='b';
+
+The object pattern coerces destructuring sources to objects before accessing properties. That means that it works with primitive values:
+
+const {length : len} = 'abc'; // len = 3
+const {toString: s} = 123; // s = Number.prototype.toString
+
+const {length} = 'abc';	//length is 3 as 'abc' object has property name as length
+
+const [x,...y] = 'abc'; // x='a'; y=['b', 'c']
+
+let x;
+[x] = [true, false]; // OK, Arrays are iterable	x is true
+[x] = 'abc'; // OK, strings are iterable x is 'a'
+
+[x] = {}; // TypeError, empty objects are not iterable
+[x] = undefined; // TypeError, not iterable
+[x] = null; // TypeError, not iterable
+
+
+Property value shorthands are a feature of object literals: If the property value is a variable that has the same name as the property key then you can omit the key. This works for destructuring, too:
+
+const { x, y } = { x: 11, y: 8 }; // x = 11; y = 8
+
+// Same as:
+const { x: x, y: y } = { x: 11, y: 8 };
+You can also combine property value shorthands with default values:
+
+const { x, y = 1 } = {}; // x = undefined; y = 1
+
+Elision lets you use the syntax of Array “holes” to skip elements during destructuring:
+
+const [,, x, y] = ['a', 'b', 'c', 'd']; // x = 'c'; y = 'd'
+
+The rest operator lets you extract the remaining elements of an iterable into an Array. If this operator is used inside an Array pattern, it must come last:
+
+const [x, ...y] = ['a', 'b', 'c']; // x='a'; y=['b', 'c']
+
+Input to a rest operator is an iterable and output is an array.
+Rest operator does is destructring and assigning data to an array.
+
+const [x, y, ...z] = ['a']; // x='a'; y=undefined; z=[]
+
+The operand of the rest operator doesn’t have to be a variable, you can use patterns, too:
+
+const [x, ...[y, z]] = ['a', 'b', 'c'];
+    // x = 'a'; y = 'b'; z = 'c'
+The rest operator triggers the following destructuring:
+
+[y, z] = ['b', 'c']
+
+You can also assign to object properties and Array elements via the rest operator (...):
+
+const obj = {};
+[first, ...obj.prop] = ['a', 'b', 'c'];
+    // first = 'a'; obj.prop = ['b', 'c']
+
+There are two things to be mindful of when using destructuring:
+
+You can’t start a statement with a curly brace.
+During destructuring, you can either declare variables or assign to them, but not both.
+
+Because code blocks begin with a curly brace, statements must not begin with one. This is unfortunate when using object destructuring in an assignment:
+
+{ a, b } = someObject; // SyntaxError
+The work-around is to put the complete expression in parentheses:
+
+({ a, b } = someObject); // OK
+With let, var and const, curly braces never cause problems:
+
+const { a, b } = someObject; // OK
+
+The for-of loop supports destructuring:
+
+const map = new Map().set(false, 'no').set(true, 'yes');
+for (const [key, value] of map) {
+  console.log(key + ' is ' + value);
+}
+You can use destructuring to swap values. That is something that engines could optimize, so that no Array would be created.
+
+[a, b] = [b, a];
+You can use destructuring to split an Array:
+
+const [first, ...rest] = ['a', 'b', 'c'];
+    // first = 'a'; rest = ['b', 'c']
+
+10.10.3 Array-destructuring iterable values 
+Array-destructuring works with any iterable value. That is occasionally useful:
+
+const [x,y] = new Set().add('a').add('b');
+    // x = 'a'; y = 'b'
+
+const [a,b] = 'foo';
+    // a = 'f'; b = 'o'
+
+function move1({x=0, y=0} = {}) { // (A)
+    return [x, y];
+}
+move1({x: 3, y: 8}); // [3, 8]
+move1({x: 3}); // [3, 0]
+move1({}); // [0, 0]
+move1(); // [0, 0]
+There are three default values in line A:
+
+The first two default values allow you to omit x and y.
+The third default value allows you to call move1() without parameters (as in the last line).
+//Read destructring chapter ending concept 10.11 The destructuring algorithm 
+
+Parameter Handling
+
