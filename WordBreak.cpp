@@ -4,10 +4,10 @@
 using namespace std;
 #define N 12
 string dictionary[N] = {"i","like","sam","sung","samsung","mobile","ice","cream","icecream","man","go","mango"};
-string sentence = "ilikesam";
+string sentence = "ilikesamsung";
 int length = sentence.length();
 bool **table = NULL;
-vector<int> indexTable[8][8]; //Need to create this table dynamically depending on the length of the sentence or may
+vector<int> indexTable[12][12]; //Need to create this table dynamically depending on the length of the sentence or may
                               //be any other efficient way to store multiple values for a given substring between i and j
 
 bool IsInDictionary(string str){
@@ -24,8 +24,10 @@ void BreakTheWord(){
   int sub_len = 1;
   for(int i=0;i<length;i=i+sub_len){  //check if each letter in the sentence exists in the dictionary
     string substr = sentence.substr(i,sub_len);
-    if(IsInDictionary(substr))
+    if(IsInDictionary(substr)){
       table[i][i] = true;
+      indexTable[i][i].push_back(i);
+    }
   }
   for(sub_len=2;sub_len<=length;sub_len++){ //start checking all substrings of lengths 2 to string length
     for(int i=0;i<=length-sub_len;i++){ //Iterate over all substrings of particular length 
@@ -75,6 +77,16 @@ void printIndexTable(){
   }
 }
 
+void printBrokenWord(int begin,int end){
+  int splitAt = indexTable[begin][end].at(0);
+  if(splitAt == begin){
+    cout << sentence.substr(begin,end-begin+1) << " ";
+    return;
+  }
+  printBrokenWord(begin,splitAt-1);
+  printBrokenWord(splitAt,end);
+}
+
 int main(){
   table = (bool **)malloc((length) * sizeof(bool *)); //rows
   for (int i=0; i<length; i++)
@@ -87,6 +99,7 @@ int main(){
   BreakTheWord();
   //printArray();
   printIndexTable();
+  //printBrokenWord(0,7);
   for (int i = 0; i < length ; i++){
     free(table[i]);
   }
