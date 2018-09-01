@@ -489,3 +489,177 @@ The third default value allows you to call move1() without parameters (as in the
 
 Parameter Handling
 
+If you prefix a parameter name with the rest operator (...), that parameter receives all remaining parameters via an Array:
+
+function format(pattern, ...params) {
+    return {pattern, params};
+}
+format(1, 2, 3);
+    // { pattern: 1, params: [ 2, 3 ] }
+format();
+    // { pattern: undefined, params: [] }
+
+function selectEntries({ start=0, end=-1, step=1 } = {}) {  //line A
+	console.log(start);
+	console.log(step);
+	console.log(end);
+}
+
+selectEntries({ start: 10, end: 30, step: 2 }); // 10 2 3
+selectEntries({ step: 3 }); // 0 3 -1
+selectEntries({});  // 0 1 -1
+selectEntries();    // 0 1 -1
+
+The = {} in line A enables you to call selectEntries() without paramters.
+If you call selectEntries() with zero arguments, the destructuring fails, because you can’t match an object pattern against undefined. That can be fixed via a default value. In the following code, the object pattern is matched against {} if the first parameter is missing.
+
+function selectEntries({ start=0, end=-1, step=1 } = {}) {
+    ···
+}
+
+In function and constructor calls, the spread operator turns iterable values into arguments:
+
+> Math.max(-1, 5, 11, 3)
+11
+> Math.max(...[-1, 5, 11, 3])
+11
+> Math.max(-1, ...[-5, 11], 3)
+11
+
+function f(x, y=0) {
+  return [x, y];
+}
+Omitting the second parameter triggers the default value:
+
+> f(1)
+[1, 0]
+> f()
+[undefined, 0]
+Watch out – undefined triggers the default value, too:
+
+> f(undefined, undefined)
+[undefined, 0]
+
+Within a parameter default value, you can refer to any variable, including other parameters:
+
+function foo(x=3, y=x) {}
+foo();     // x=3; y=3
+foo(7);    // x=7; y=7
+foo(7, 2); // x=7; y=2
+However, order matters. Parameters are declared from left to right. “Inside” a default value, you get a ReferenceError if you access a parameter that hasn’t been declared, yet:
+
+function bar(x=y, y=4) {}
+bar(3); // OK
+bar(); // ReferenceError: y is not defined
+
+Putting the rest operator (...) in front of the last formal parameter means that it will receive all remaining actual parameters in an Array.
+
+function f(x, ...y) {
+    ···
+}
+f('a', 'b', 'c'); // x = 'a'; y = ['b', 'c']
+If there are no remaining parameters, the rest parameter will be set to the empty Array:
+
+f(); // x = undefined; y = []
+The spread operator (...) looks exactly like the rest operator, but is used inside function calls and Array literals (not inside destructuring patterns).
+
+Some parameters have no default values, but can be omitted. In that case, I occasionally use the default value undefined to make it obvious that the parameter is optional. That is redundant, but descriptive.
+
+function foo(requiredParam, optionalParam = undefined) {
+    ···
+}
+
+In ECMAScript 6, you can (ab)use default parameter values to achieve more concise code (credit: idea by Allen Wirfs-Brock):
+
+/**
+ * Called if a parameter is missing and
+ * the default value is evaluated.
+ */
+function mandatory() {
+    throw new Error('Missing parameter');
+}
+function foo(mustBeProvided = mandatory()) {
+    return mustBeProvided;
+}
+
+The spread operator (...) looks exactly like the rest operator, but is its opposite:
+
+Rest operator: collects the remaining items of an iterable into an Array and is used for rest parameters and destructuring.
+Spread operator: turns the items of an iterable into arguments of a function call or into elements of an Array
+
+The spread operator can also be used inside Array literals:
+
+> [1, ...[2,3], 4]
+[1, 2, 3, 4]
+That gives you a convenient way to concatenate Arrays:
+
+const x = ['a', 'b'];
+const y = ['c'];
+const z = ['d', 'e'];
+
+const arr = [...x, ...y, ...z]; // ['a', 'b', 'c', 'd', 'e']
+One advantage of the spread operator is that its operand can be any iterable value (in contrast to the Array method concat(), which does not support iteration).
+
+Callable entities in ECMAScript6
+
+MyClass.prototype.foo = function (arg1, arg2) {
+    ···
+};
+The following is a quick way to do the same thing in ES6 (caveat: Object.assign() doesn’t move methods with super properly).
+
+Object.assign(MyClass.prototype, {
+    foo(arg1, arg2) {
+        ···
+    }
+});
+
+These are the functions that you know from ES5. There are two ways to create them:
+
+Function expression:
+  const foo = function (x) { ··· };
+Function declaration:
+  function foo(x) { ··· }
+Rules for this:
+
+Function calls: this is undefined in strict-mode functions and the global object in sloppy mode.
+Method calls: this is the receiver of the method call (or the first argument of call/apply).
+Constructor calls: this is the newly created instance
+
+Method definitions can appear inside object literals:
+
+const obj = {
+    add(x, y) {
+        return x + y;
+    }, // comma is required
+    sub(x, y) {
+        return x - y;
+    }, // comma is optional
+};
+And inside class definitions:
+
+class AddSub {
+    add(x, y) {
+        return x + y;
+    } // no comma
+    sub(x, y) {
+        return x - y;
+    } // no comma
+}
+As you can see, you must separate method definitions in an object literal with commas, 
+but there are no separators between them in a class definition. 
+The former is necessary to keep the syntax consistent, especially with regard to getters and setters.
+
+The following variables are lexical inside an arrow function (picked up from the surrounding scope):
+
+arguments
+super
+this
+new.target
+
+
+Rules:
+
+Constructor calls: follow a protocol that supports subclassing. 
+In a base class, an instance is created and this refers to it. 
+A derived class receives its instance from its superclass, which is why it needs to call super() before it can access this.
+
