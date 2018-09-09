@@ -602,6 +602,32 @@ One advantage of the spread operator is that its operand can be any iterable val
 
 Callable entities in ECMAScript6
 
+In ES5, a single construct, the (traditional) function, played three roles:
+
+    Real (non-method) function
+    Method
+    Constructor
+
+In ES6, there is more specialization. The three duties are now handled as follows. As far as function definitions and class definitions are concerned, a definition is either a declaration or an expression.
+
+    Real (non-method) function:
+        Arrow functions (only have an expression form)
+        Traditional functions (created via function definitions)
+        Generator functions (created via generator function definitions)
+    Method:
+        Methods (created by method definitions in object literals and class definitions)
+        Generator methods (created by generator method definitions in object literals and class definitions)
+    Constructor:
+        Classes (created via class definitions)
+
+Especially for callbacks, arrow functions are handy, because they don’t shadow the this of the surrounding scope.
+
+Method definitions are the only way to create methods that use super. They are the obvious choice in object literals and classes (where they are the only way to define methods), but what about adding a method to an existing object? For example:
+
+MyClass.prototype.foo = function (arg1, arg2) {
+    ···
+};
+
 MyClass.prototype.foo = function (arg1, arg2) {
     ···
 };
@@ -662,4 +688,57 @@ Rules:
 Constructor calls: follow a protocol that supports subclassing. 
 In a base class, an instance is created and this refers to it. 
 A derived class receives its instance from its superclass, which is why it needs to call super() before it can access this.
+
+#Prefer method definitions for methods 
+Method definitions are the only way to create methods that use super. They are the obvious choice in object literals and classes (where they are the only way to define methods), but what about adding a method to an existing object? For example:
+
+MyClass.prototype.foo = function (arg1, arg2) {
+    ···
+};
+
+#Prefer arrow functions as callbacks
+As callbacks, arrow functions have two advantages over traditional functions:
+
+    1. this is lexical and therefore safer to use.
+    2. Their syntax is more compact. 
+       That matters especially in functional programming, where there are many higher-order functions and methods (functions and methods whose parameters are functions).
+
+#Prefer function declarations as stand-alone functions
+As stand-alone functions (versus callbacks), I prefer function declarations:
+
+function foo(arg1, arg2) {
+    ···
+}
+
+The benefits are:
+
+    Subjectively, I find they look nicer. In this case, the verbose keyword function is an advantage – you want the construct to stand out.
+    They look like generator function declarations, leading to more visual consistency of the code.
+
+12.7.1 How do I determine whether a function was invoked via new? 
+ES6 has a new protocol for subclassing, which is explained in the chapter on classes. Part of that protocol is the meta-property new.target, which refers to the first element in a chain of constructor calls (similar to this in a chain for supermethod calls). It is undefined if there is no constructor call. We can use that to enforce that a function must be invoked via new or that it must not be invoked via it. This is an example for the latter:
+
+function realFunction() {
+    if (new.target !== undefined) {
+        throw new Error('Can’t be invoked via `new`');
+    }
+    ···
+}
+In ES5, this was usually checked like this:
+
+function realFunction() {
+    "use strict";
+    if (this !== undefined) {
+        throw new Error('Can’t be invoked via `new`');
+    }
+    ···
+}
+
+Rules for this:
+
+Function calls: this is undefined in strict-mode functions and the global object in sloppy mode.
+Method calls: this is the receiver of the method call (or the first argument of call/apply).
+Constructor calls: this is the newly created instance.
+
+TODO: 12.3.4 Methods versus callbacks 
 
