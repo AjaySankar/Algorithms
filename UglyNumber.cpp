@@ -54,7 +54,7 @@ int main(int argc, char const *argv[]){
   int x = 1;
   //cout << isUglyTab(5832) << endl; 
   while(1){
-    if(isUglyTab(number)){
+    if(isUglyTab(number)){  //Intresting observation: Tabulation takes more time than memorization. Why???
       if(x == n){
         cout << n << "th Ugly number is " << number;
         break;
