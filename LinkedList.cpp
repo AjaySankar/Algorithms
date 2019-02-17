@@ -49,6 +49,9 @@ class LinkedList{
         void printList();
         void insert(int element);
         void remove(int element);
+        int getNthNodeFromEnd(int n);
+        void reverseList();
+        void swapNodes();
 };
 
 LinkedList::LinkedList(){
@@ -71,6 +74,22 @@ void LinkedList::printList(){
         temp = temp->getNext();
     }
     cout << endl;
+}
+
+int LinkedList::getNthNodeFromEnd(int n) {
+    if(n < 0 || n > length) {
+        return INT16_MIN;
+    }
+    Node* temp = head;
+    Node* nthNode = head;
+    int count = 0;
+    while(temp != NULL) {
+        temp = temp->getNext();
+        count++;
+        if(count > n)
+            nthNode = nthNode->getNext();
+    }
+    return nthNode->getValue();
 }
 
 void LinkedList::insert(int element){
@@ -114,6 +133,45 @@ void LinkedList::remove(int element){
     delete current;
 }
 
+void LinkedList::reverseList() {
+    Node* temp = NULL; Node* nextNode = NULL;
+    while(head) {
+        nextNode = head->getNext();
+        head->addNext(temp);
+        temp = head;
+        head = nextNode;
+    }
+    head = temp;
+    this->printList();
+}
+
+void LinkedList::swapNodes() {
+    if(!head) {
+        cout << "List is empty" << endl;
+        return;
+    }
+    Node* a = NULL;
+    Node* b = head;
+    if(!b->getNext()) {
+        cout << "Length of the list is too short" << endl;
+        return;
+    }
+    Node* c = b->getNext();
+    while(b && c) {
+        if(!a) {
+            head = c;
+        }
+        else 
+            a->addNext(c);
+        b->addNext(c->getNext());
+        c->addNext(b);
+        a = b;
+        b = b->getNext();
+        c = b->getNext();
+    }
+    printList();
+}
+
 int main(){
     LinkedList *list = new LinkedList();
     list->insert(10);
@@ -121,10 +179,18 @@ int main(){
     list->insert(30);
     list->insert(40);
     list->insert(50);
+    list->insert(60);
+    list->insert(70);
+    list->insert(80);
+    list->insert(90);
     cout << list->getLength() << endl;
     list->printList();
-    list->remove(30);
-    list->printList();
-    cout << list->getLength() << endl;
+    list->swapNodes();
+    //list->printList();
+    //list->reverseList();
+    //cout << list->getNthNodeFromEnd(9) << endl;
+    //list->remove(30);
+    //list->printList();
+    //cout << list->getLength() << endl;
     return 0;
 }
