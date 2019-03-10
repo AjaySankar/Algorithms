@@ -14,4 +14,6 @@ class Stack {
         int pop();
         void printStack();
         int getTop();
+        void insertAtBottom(int val);
+        void reverseStack();
 };
