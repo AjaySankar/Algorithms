@@ -1,4 +1,5 @@
 #include<iostream>
+#include<algorithm>
 using namespace std;
 #include "BST.h"
 
@@ -305,8 +306,16 @@ void BST::Postorder(BST_Node* root){
      printf("%d ", root->getValue());  
 }
 
+int BST::getHeight(BST_Node* root) {
+    if(!root)
+        return 0;
+    int leftHeight = getHeight(root->getLeft());
+    int rightHeight = getHeight(root->getRight());
+    return std::max(leftHeight,rightHeight)+1;
+}
+
 int main(){
-    BST *tree = new BST();
+    /*BST *tree = new BST();
     tree->insertValue(15);
     tree->insertValue(6);
     tree->insertValue(18);
@@ -320,8 +329,16 @@ int main(){
     tree->insertValue(9);
     tree->printTree(IN_ORDER);   cout << endl;
     //cout << "The level of the node is " << tree->getDepth(tree->Search(15));
-    cout << "The LCA is " << tree->getLCA(tree->Search(2),tree->Search(18))->getValue();
+    //cout << "The LCA is " << tree->getLCA(tree->Search(2),tree->Search(18))->getValue();
     //tree->deleteNode(15);
     //tree->printTree(IN_ORDER);   cout << endl;
+    cout << tree->getHeight(tree->getRoot());*/
+    Queue<int> *q = new Queue<int>(3);
+    q->enQueue(10);
+    q->enQueue(20);
+    q->enQueue(30);
+    q->printQueue();
+    cout << q->deQueue() << endl;
+    q->printQueue();
     return 0;
 }
