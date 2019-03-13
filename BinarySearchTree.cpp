@@ -2,6 +2,7 @@
 #include<algorithm>
 using namespace std;
 #include "BST.h"
+#include "stdio.h"
 
 BST::BST(){
     root = NULL;
@@ -314,8 +315,63 @@ int BST::getHeight(BST_Node* root) {
     return std::max(leftHeight,rightHeight)+1;
 }
 
+void BST::levelOrderTraversal() {
+    queue <BST_Node*> q;
+    q.push(root);
+    while(!q.empty()){
+      BST_Node* node = q.front();
+      q.pop();
+      cout << node->getValue() << " ";
+      if(node->getLeft())
+        q.push(node->getLeft());
+      if(node->getRight())
+        q.push(node->getRight());
+    }
+    cout << endl;
+}
+
+int BST::getLevelCount() {
+   int levels = 0;
+    queue <BST_Node*> q;
+    q.push(root);
+    q.push(NULL);
+    while(!q.empty()){
+      BST_Node* node = q.front();
+      q.pop();
+      if(!node) {
+        if(!q.empty()) {
+          q.push(NULL);
+        }
+        levels++;
+      }
+      else {
+        if(node->getLeft())
+          q.push(node->getLeft());
+        if(node->getRight())
+          q.push(node->getRight());
+      }
+    }
+    return levels;
+}
+
+void BST::PrintPaths(BST_Node* root,int path[], int pathLen){
+  if(root == NULL)
+    return;
+  path[pathLen] = root->getValue();
+  pathLen++;
+  if(root->getLeft() == NULL && root->getRight() == NULL){
+    for(int i=0;i<pathLen;i++)
+      printf("%d ",path[i]);
+    printf("\n");
+  }
+  else {
+    PrintPaths(root->getLeft(), path, pathLen);
+    PrintPaths(root->getRight(), path, pathLen);
+  }
+}
+
 int main(){
-    /*BST *tree = new BST();
+    BST *tree = new BST();
     tree->insertValue(15);
     tree->insertValue(6);
     tree->insertValue(18);
@@ -328,17 +384,14 @@ int main(){
     tree->insertValue(13);
     tree->insertValue(9);
     tree->printTree(IN_ORDER);   cout << endl;
-    //cout << "The level of the node is " << tree->getDepth(tree->Search(15));
-    //cout << "The LCA is " << tree->getLCA(tree->Search(2),tree->Search(18))->getValue();
-    //tree->deleteNode(15);
-    //tree->printTree(IN_ORDER);   cout << endl;
+    tree->levelOrderTraversal();
+    cout << "Number of levels in the tree: " << tree->getLevelCount() << endl;
+    int path[100];
+    tree->PrintPaths(tree->getRoot(), path, 0);
+    /*cout << "The level of the node is " << tree->getDepth(tree->Search(15));
+    cout << "The LCA is " << tree->getLCA(tree->Search(2),tree->Search(18))->getValue();
+    tree->deleteNode(15);
+    tree->printTree(IN_ORDER);   cout << endl;
     cout << tree->getHeight(tree->getRoot());*/
-    Queue<int> *q = new Queue<int>(3);
-    q->enQueue(10);
-    q->enQueue(20);
-    q->enQueue(30);
-    q->printQueue();
-    cout << q->deQueue() << endl;
-    q->printQueue();
     return 0;
 }

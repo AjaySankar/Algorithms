@@ -1,6 +1,7 @@
 #include<iostream>
 using namespace std;
 #include "BST_Node.h"
+
 BST_Node::BST_Node(){
     value = INT16_MIN;
     left  = NULL;

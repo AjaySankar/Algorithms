@@ -1,5 +1,5 @@
 #include "BST_Node.h"
-#include "GenericQueue.h"
+#include<queue>
 enum Traversal_Type{PRE_ORDER=1,IN_ORDER,POST_ORDER};
 class BST{
     protected:
@@ -28,4 +28,7 @@ class BST{
         BST_Node* getLCA(BST_Node* node1,BST_Node* node2);
         void deleteNode(int element);
         int getHeight(BST_Node* root);
+        void levelOrderTraversal();
+        int getLevelCount();
+        void PrintPaths(BST_Node* root,int path[], int pathLen); 
 };

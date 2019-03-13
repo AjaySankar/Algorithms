@@ -9,7 +9,7 @@ Queue<T>::Queue(int size){
     this->size  = size;
     this->front = -1;
     this->rear  = -1;
-    this->arr   = (int*)malloc(size*sizeof(int));
+    this->arr   = (T*)malloc(size*sizeof(T));
 }
 
 template <class T>
@@ -71,7 +71,7 @@ void Queue<T>::printQueue(){
     cout << endl;
 }
 
-/*int main(){
+int tmain(){
     Queue<int> *q = new Queue<int>(3);
     q->enQueue(10);
     q->enQueue(20);
@@ -80,4 +80,4 @@ void Queue<T>::printQueue(){
     cout << q->deQueue() << endl;
     q->printQueue();
     return 0;
-}*/
+}
