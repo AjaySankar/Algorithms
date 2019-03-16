@@ -34,4 +34,5 @@ class BST{
         void PrintPaths(BST_Node* root,int path[], int pathLen);
         bool printAncestor(BST_Node* root, BST_Node* node);
         void printInorderIterative(BST_Node* root);
+        void printPreorderIterative(BST_Node* root);
 };

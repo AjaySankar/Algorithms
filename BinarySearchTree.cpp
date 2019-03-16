@@ -396,6 +396,7 @@ bool BST::printAncestor(BST_Node* root, BST_Node* node) {
 void BST::printInorderIterative(BST_Node* root) {
     stack <BST_Node*> s;
     while(1){
+        //Add all left nodes by going deeply in left nodes
         while(root) {
             s.push(root);
             root = root->getLeft();
@@ -403,7 +404,28 @@ void BST::printInorderIterative(BST_Node* root) {
         if(s.empty()) 
             break;
         root = s.top(); s.pop();
+        //Print after popping out (visting node second time) which is the principle of inorder
         cout << root->getValue() << " ";
+        //Explored left sub tree and root and no go on with exploring right sub tree
+        root = root->getRight();
+    }
+    
+}
+
+void BST::printPreorderIterative(BST_Node* root) {
+    stack <BST_Node*> s;
+    while(1){
+        //Add all left nodes by going deeply in left nodes
+        while(root) {
+            s.push(root);
+            //Print when the node is pushed (visited first time) which is the principle of preorder
+            cout << root->getValue() << " ";
+            root = root->getLeft();
+        }
+        if(s.empty()) 
+            break;
+        root = s.top(); s.pop();
+        //Explored left sub tree and root and no go on with exploring right sub tree
         root = root->getRight();
     }
     
@@ -422,8 +444,8 @@ int main(){
     tree->insertValue(4);
     tree->insertValue(13);
     tree->insertValue(9);
-    tree->printTree(IN_ORDER);   cout << endl;
-    tree->printInorderIterative(tree->getRoot()); cout << endl;
+    tree->printTree(PRE_ORDER);   cout << endl;
+    tree->printPreorderIterative(tree->getRoot()); cout << endl;
     //tree->levelOrderTraversal();
     //cout << "Number of levels in the tree: " << tree->getLevelCount() << endl;
     //int path[100];
