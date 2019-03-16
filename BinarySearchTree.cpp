@@ -370,6 +370,29 @@ void BST::PrintPaths(BST_Node* root,int path[], int pathLen){
   }
 }
 
+bool BST::printAncestor(BST_Node* root, BST_Node* node) {
+    //Base case 1
+    if(root == NULL)
+        return false;
+    //Check if root is an immediate ancestor(parent) of the node and return true i,e find the node and it parent in the tree
+    if(root->getLeft() == node || root->getRight() == node) {
+        cout << "Parent " << root->getValue() << endl;
+        return true;
+    }
+    //If not an immediate ancestor then check in LST to find for such ancestor
+    bool foundInLST = printAncestor(root->getLeft(), node);
+    if(foundInLST) {
+        cout << "Ancestor: " << root->getValue() << endl;
+    }
+    //If not an immediate ancestor then check in RST to find for such ancestor
+    bool foundInRST = printAncestor(root->getRight(), node);
+    if(foundInRST) {
+        cout << "Ancestor: " << root->getValue() << endl;
+    }
+    //Return if found in either LST or RST of the root so that root can be printed as one of the ancestors
+    return foundInLST || foundInRST;
+}
+
 int main(){
     BST *tree = new BST();
     tree->insertValue(15);
@@ -383,15 +406,16 @@ int main(){
     tree->insertValue(4);
     tree->insertValue(13);
     tree->insertValue(9);
-    tree->printTree(IN_ORDER);   cout << endl;
-    tree->levelOrderTraversal();
-    cout << "Number of levels in the tree: " << tree->getLevelCount() << endl;
-    int path[100];
-    tree->PrintPaths(tree->getRoot(), path, 0);
+    //tree->printTree(IN_ORDER);   cout << endl;
+    //tree->levelOrderTraversal();
+    //cout << "Number of levels in the tree: " << tree->getLevelCount() << endl;
+    //int path[100];
+    //tree->PrintPaths(tree->getRoot(), path, 0);
     /*cout << "The level of the node is " << tree->getDepth(tree->Search(15));
     cout << "The LCA is " << tree->getLCA(tree->Search(2),tree->Search(18))->getValue();
     tree->deleteNode(15);
     tree->printTree(IN_ORDER);   cout << endl;
     cout << tree->getHeight(tree->getRoot());*/
+    tree->printAncestor(tree->getRoot(), tree->Search(9));
     return 0;
 }

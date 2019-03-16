@@ -30,5 +30,6 @@ class BST{
         int getHeight(BST_Node* root);
         void levelOrderTraversal();
         int getLevelCount();
-        void PrintPaths(BST_Node* root,int path[], int pathLen); 
+        void PrintPaths(BST_Node* root,int path[], int pathLen);
+        bool printAncestor(BST_Node* root, BST_Node* node);
 };
