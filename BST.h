@@ -1,5 +1,6 @@
 #include "BST_Node.h"
 #include<queue>
+#include<stack>
 enum Traversal_Type{PRE_ORDER=1,IN_ORDER,POST_ORDER};
 class BST{
     protected:
@@ -32,4 +33,5 @@ class BST{
         int getLevelCount();
         void PrintPaths(BST_Node* root,int path[], int pathLen);
         bool printAncestor(BST_Node* root, BST_Node* node);
+        void printInorderIterative(BST_Node* root);
 };

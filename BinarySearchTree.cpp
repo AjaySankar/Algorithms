@@ -393,6 +393,22 @@ bool BST::printAncestor(BST_Node* root, BST_Node* node) {
     return foundInLST || foundInRST;
 }
 
+void BST::printInorderIterative(BST_Node* root) {
+    stack <BST_Node*> s;
+    while(1){
+        while(root) {
+            s.push(root);
+            root = root->getLeft();
+        }
+        if(s.empty()) 
+            break;
+        root = s.top(); s.pop();
+        cout << root->getValue() << " ";
+        root = root->getRight();
+    }
+    
+}
+
 int main(){
     BST *tree = new BST();
     tree->insertValue(15);
@@ -406,7 +422,8 @@ int main(){
     tree->insertValue(4);
     tree->insertValue(13);
     tree->insertValue(9);
-    //tree->printTree(IN_ORDER);   cout << endl;
+    tree->printTree(IN_ORDER);   cout << endl;
+    tree->printInorderIterative(tree->getRoot()); cout << endl;
     //tree->levelOrderTraversal();
     //cout << "Number of levels in the tree: " << tree->getLevelCount() << endl;
     //int path[100];
