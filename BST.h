@@ -38,4 +38,5 @@ class BST{
         void iterativeFindLCA(BST_Node* alpha, BST_Node* beta);
         void fillStack(BST_Node* node, stack<BST_Node*>* s);
         void printStack(stack<BST_Node*>* s);
+        void pushPathToStack(BST_Node* root,BST_Node* path[], int pathLen, int data, stack<BST_Node*>* s);
 };

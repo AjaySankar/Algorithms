@@ -374,6 +374,25 @@ void BST::PrintPaths(BST_Node* root,int path[], int pathLen){
   }
 }
 
+void BST::pushPathToStack(BST_Node* root,BST_Node* path[], int pathLen, int data, stack<BST_Node*>* s) {
+    //Fills the stack passed with path from root to data with root at bottom position.
+    //This method can be used to fill the stack with the path in case of binary trees which DO NOT
+    //follow BST property
+    if(root == NULL)
+        return;
+    path[pathLen] = root;
+    pathLen++;
+    if(root->getValue() == data){
+        for(int i=0;i<pathLen;i++) {
+            s->push(path[i]);
+        }
+    }
+    else {
+        pushPathToStack(root->getLeft(), path, pathLen, data, s);
+        pushPathToStack(root->getRight(), path, pathLen, data, s);
+    }
+}
+
 bool BST::printAncestor(BST_Node* root, BST_Node* node) {
     //Base case 1
     if(root == NULL)
@@ -436,6 +455,8 @@ void BST::printPreorderIterative(BST_Node* root) {
 }
 
 void BST::fillStack(BST_Node* node, stack<BST_Node*>* s) {
+    //Fills stack with the path from root to node in reverse order i,e root at the bottom of stack
+    //It uses BST property to fill the stack (left<root<right)
     BST_Node* temp = root;
     while(1){
         s->push(temp);
@@ -460,7 +481,9 @@ void BST::printStack(stack<BST_Node*>* s) {
 
 void BST::iterativeFindLCA(BST_Node* alpha, BST_Node* beta) {
     stack <BST_Node*> alphaStack,betaStack;
-    this->fillStack(alpha, &alphaStack);
+    //this->fillStack(alpha, &alphaStack);
+    BST_Node* path[1000];
+    this->pushPathToStack(root, path, 0, alpha->getValue(), &alphaStack);
     this->fillStack(beta, &betaStack);
     int alphaLength = alphaStack.size();
     int betaLength = betaStack.size();
@@ -508,6 +531,9 @@ int main(){
     tree->printTree(IN_ORDER);   cout << endl;
     cout << tree->getHeight(tree->getRoot());*/
     //tree->printAncestor(tree->getRoot(), tree->Search(9));
-    tree->iterativeFindLCA(tree->Search(20),tree->Search(7));
+    tree->iterativeFindLCA(tree->Search(20),tree->Search(9));
+    /*BST_Node* path[1000];
+    stack<BST_Node*> s;
+    tree->pushPathToStack(tree->getRoot(), path, 0, 9, &s);*/
     return 0;
 }
