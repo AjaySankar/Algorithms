@@ -203,6 +203,10 @@ BST_Node* BST::getInorderSuccessor(int value){
             BST_Node* temp = root;
             while(temp){
                 if(temp->getValue() > value){
+                    //We need a node(successor) with value greater than passed value and once finding
+                    //such node(temp), then go to its left beacuse the left subtree may contain a value
+                    //that is > than passed value and < than temp which will be a closer inorder successor
+                    //than temp.
                     succ = temp;
                     temp = temp->getLeft();
                 }
@@ -431,6 +435,54 @@ void BST::printPreorderIterative(BST_Node* root) {
     
 }
 
+void BST::fillStack(BST_Node* node, stack<BST_Node*>* s) {
+    BST_Node* temp = root;
+    while(1){
+        s->push(temp);
+        if(temp->getValue() == node->getValue())
+            break;
+        if(temp->getValue() < node->getValue())
+            temp = temp->getRight();
+        else 
+            temp = temp->getLeft();
+    }
+    //this->printStack(s);
+}
+
+void BST::printStack(stack<BST_Node*>* s) {
+    while(!s->empty()){
+        BST_Node* top = s->top();
+        s->pop();
+        cout << top->getValue() << " ";      
+    }
+    cout << endl;
+}
+
+void BST::iterativeFindLCA(BST_Node* alpha, BST_Node* beta) {
+    stack <BST_Node*> alphaStack,betaStack;
+    this->fillStack(alpha, &alphaStack);
+    this->fillStack(beta, &betaStack);
+    int alphaLength = alphaStack.size();
+    int betaLength = betaStack.size();
+    int lenDiff =  alphaLength > betaLength ? alphaLength - betaLength : betaLength - alphaLength;
+    if(lenDiff) {
+        stack <BST_Node*>* longerStack = alphaLength > betaLength ? &alphaStack : &betaStack;
+        while(lenDiff) {
+            longerStack->pop();
+            lenDiff--;
+        }
+    }
+    while(!alphaStack.empty() && !betaStack.empty()) {
+        BST_Node* alphaTop = alphaStack.top(); BST_Node* betaTop = betaStack.top();
+        if(alphaTop->getValue() == betaTop->getValue()) {
+            cout << "LCA of " << alpha->getValue() << " " << beta->getValue() << " is: " << alphaTop->getValue() << endl;
+            break;
+        }
+        alphaStack.pop();
+        betaStack.pop();
+    }
+}
+
 int main(){
     BST *tree = new BST();
     tree->insertValue(15);
@@ -444,8 +496,8 @@ int main(){
     tree->insertValue(4);
     tree->insertValue(13);
     tree->insertValue(9);
-    tree->printTree(PRE_ORDER);   cout << endl;
-    tree->printPreorderIterative(tree->getRoot()); cout << endl;
+    //tree->printTree(PRE_ORDER);   cout << endl;
+    //tree->printPreorderIterative(tree->getRoot()); cout << endl;
     //tree->levelOrderTraversal();
     //cout << "Number of levels in the tree: " << tree->getLevelCount() << endl;
     //int path[100];
@@ -455,6 +507,7 @@ int main(){
     tree->deleteNode(15);
     tree->printTree(IN_ORDER);   cout << endl;
     cout << tree->getHeight(tree->getRoot());*/
-    tree->printAncestor(tree->getRoot(), tree->Search(9));
+    //tree->printAncestor(tree->getRoot(), tree->Search(9));
+    tree->iterativeFindLCA(tree->Search(20),tree->Search(7));
     return 0;
 }

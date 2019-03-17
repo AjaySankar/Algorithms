@@ -35,4 +35,7 @@ class BST{
         bool printAncestor(BST_Node* root, BST_Node* node);
         void printInorderIterative(BST_Node* root);
         void printPreorderIterative(BST_Node* root);
+        void iterativeFindLCA(BST_Node* alpha, BST_Node* beta);
+        void fillStack(BST_Node* node, stack<BST_Node*>* s);
+        void printStack(stack<BST_Node*>* s);
 };
