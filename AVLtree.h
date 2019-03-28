@@ -1,6 +1,4 @@
 #include "AVL_Node.h"
-#include<queue>
-#include<stack>
 enum Traversal_Type{PRE_ORDER=1,IN_ORDER,POST_ORDER};
 class AVL{
     public:
@@ -12,4 +10,6 @@ class AVL{
         void printTree(Traversal_Type type);
         void Inorder(AVL_Node* root);
         AVL_Node* getRoot();
+        AVL_Node* leftRotate(AVL_Node* root);
+        AVL_Node* rightRotate(AVL_Node* root);
 };

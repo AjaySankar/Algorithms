@@ -1,5 +1,3 @@
-#include<iostream>
-using namespace std;
 #include "AVL_Node.h"
 
 AVL_Node::AVL_Node(){
@@ -54,6 +52,8 @@ int AVL_Node::getHeight() {
     return height;
 }
 
-void AVL_Node::setHeight(int h) {
-    height = h;
+void AVL_Node::setHeight() {
+    int leftHeight = this->left ? this->left->height : 0;
+    int rightHeight = this->right ? this->right->height : 0;
+    this->height = leftHeight > rightHeight ? leftHeight+1 : rightHeight+1;
 }

@@ -1,8 +1,4 @@
-#include<iostream>
-#include<algorithm>
-using namespace std;
 #include "AVLtree.h"
-#include "stdio.h"
 
 AVL::AVL(){
     root = NULL;
@@ -35,10 +31,26 @@ void AVL::Inorder(AVL_Node* root){
      Inorder(root->getLeft());
  
      /* then print the data of node */
-     printf("%d ", root->getValue());  
+     cout << root->getValue() << " : " << root->getHeight() << endl;
  
      /* now recur on right child */
      Inorder(root->getRight());
+}
+
+AVL_Node* AVL::leftRotate(AVL_Node* root) {
+    AVL_Node* X = root; AVL_Node* Y = X->right;
+    X->right = Y->left;
+    Y->left = X;
+    X->height = std::max(X->left ? X->left->height : 0, X->right ? X->right->height : 0);
+    return Y;
+}
+
+AVL_Node* AVL::rightRotate(AVL_Node* root) {
+    AVL_Node* X = root; AVL_Node* Y = X->left;
+    X->left = Y->right;
+    Y->right = X;
+    X->height = std::max(X->left ? X->left->height : 0, X->right ? X->right->height : 0);
+    return Y;
 }
 
 AVL_Node* AVL::insert(AVL_Node* node, int value) {
@@ -54,22 +66,27 @@ AVL_Node* AVL::insert(AVL_Node* node, int value) {
     else{
         node->left = insert(node->left, value);
     }
+    node->setHeight();
     return node;
 }
 
 int main() { 
     AVL* tree = new AVL();
-    tree->insert(tree->root,15);
-    tree->insert(tree->root,6);
-    tree->insert(tree->root,18);
     tree->insert(tree->root,3);
+    tree->insert(tree->root,2);
+    tree->insert(tree->root,1);
+    AVL_Node* newRoot = tree->rightRotate(tree->root);
+    //cout << newRoot->getValue() << " " << newRoot->getLeft()->getValue() << " " << newRoot->getRight()->getValue();
+    //tree->Inorder(newRoot);
+    /*tree->insert(tree->root,3);
     tree->insert(tree->root,7);
     tree->insert(tree->root,17);
     tree->insert(tree->root,20);
     tree->insert(tree->root,2);
     tree->insert(tree->root,4);
     tree->insert(tree->root,13);
-    tree->insert(tree->root,9);
-    tree->printTree(IN_ORDER);
+    tree->insert(tree->root,9);*/
+    AVL* newTree = new AVL(newRoot);
+    newTree->printTree(IN_ORDER);
     return 0;
 }
