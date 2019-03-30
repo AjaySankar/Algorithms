@@ -1,5 +1,3 @@
-#define INT16_MIN -32768
-
 class BST_Node{
     private:
         int value;
