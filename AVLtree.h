@@ -12,4 +12,7 @@ class AVL{
         AVL_Node* getRoot();
         AVL_Node* leftRotate(AVL_Node* root);
         AVL_Node* rightRotate(AVL_Node* root);
+        AVL_Node* leftRightRotate(AVL_Node* root);
+        AVL_Node* rightLeftRotate(AVL_Node* root);
+        int getHeight(AVL_Node* node);
 };

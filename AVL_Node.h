@@ -1,7 +1,6 @@
 #include<iostream>
 #include<algorithm>
 using namespace std;
-#define INT16_MIN -32768
 
 class AVL_Node{
     public:
@@ -22,5 +21,4 @@ class AVL_Node{
         void addLeft(AVL_Node* node);
         void addRight(AVL_Node* node);
         int getHeight();
-        void setHeight();
 };

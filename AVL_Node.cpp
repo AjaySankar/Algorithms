@@ -51,9 +51,3 @@ void AVL_Node::addRight(AVL_Node* node){
 int AVL_Node::getHeight() {
     return height;
 }
-
-void AVL_Node::setHeight() {
-    int leftHeight = this->left ? this->left->height : 0;
-    int rightHeight = this->right ? this->right->height : 0;
-    this->height = leftHeight > rightHeight ? leftHeight+1 : rightHeight+1;
-}

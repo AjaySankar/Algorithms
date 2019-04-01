@@ -41,52 +41,79 @@ AVL_Node* AVL::leftRotate(AVL_Node* root) {
     AVL_Node* X = root; AVL_Node* Y = X->right;
     X->right = Y->left;
     Y->left = X;
-    X->height = std::max(X->left ? X->left->height : 0, X->right ? X->right->height : 0);
+    X->height = 1+std::max(getHeight(X->right), getHeight(X->left));
+    Y->height = 1+std::max(getHeight(Y->right), X->height);
     return Y;
+}
+
+int AVL::getHeight(AVL_Node* node) {
+    if(!node)
+        return -1;
+    return node->height;
 }
 
 AVL_Node* AVL::rightRotate(AVL_Node* root) {
     AVL_Node* X = root; AVL_Node* Y = X->left;
     X->left = Y->right;
     Y->right = X;
-    X->height = std::max(X->left ? X->left->height : 0, X->right ? X->right->height : 0);
+    X->height = 1+std::max(getHeight(X->right), getHeight(X->left));
+    Y->height = 1+std::max(getHeight(Y->left), X->height);
     return Y;
+}
+
+AVL_Node* AVL::leftRightRotate(AVL_Node* root) {
+    root->left = leftRotate(root->left);
+    return rightRotate(root);
+}
+
+AVL_Node* AVL::rightLeftRotate(AVL_Node* root) {
+    root->right = rightRotate(root->right);
+    return leftRotate(root);
 }
 
 AVL_Node* AVL::insert(AVL_Node* node, int value) {
     if(!node) {
-        AVL_Node* newNode = new AVL_Node(value);
-        if(!this->root)
-            this->root = newNode;
-        return newNode;
+        node = new AVL_Node(value);
     }
     else if (node->getValue() < value) {
         node->right = insert(node->right, value);
+        if(getHeight(node->right) - getHeight(node->left) == 2) {
+            if(root->right->value > value) {
+                node = rightLeftRotate(node);
+            }
+            else {
+                node = leftRotate(node);
+            } 
+        }
     }
-    else{
+    else if(node->getValue() > value){
         node->left = insert(node->left, value);
+        if(getHeight(node->left) - getHeight(node->right) == 2) {
+            if(root->left->value < value) {
+                node = leftRightRotate(node);
+            }
+            else {
+                node = rightRotate(node);
+            }
+        }
     }
-    node->setHeight();
+    node->height = 1+std::max(getHeight(node->left), getHeight(node->right));
     return node;
 }
 
 int main() { 
     AVL* tree = new AVL();
-    tree->insert(tree->root,3);
-    tree->insert(tree->root,2);
-    tree->insert(tree->root,1);
-    AVL_Node* newRoot = tree->rightRotate(tree->root);
-    //cout << newRoot->getValue() << " " << newRoot->getLeft()->getValue() << " " << newRoot->getRight()->getValue();
-    //tree->Inorder(newRoot);
-    /*tree->insert(tree->root,3);
-    tree->insert(tree->root,7);
-    tree->insert(tree->root,17);
-    tree->insert(tree->root,20);
-    tree->insert(tree->root,2);
-    tree->insert(tree->root,4);
-    tree->insert(tree->root,13);
-    tree->insert(tree->root,9);*/
-    AVL* newTree = new AVL(newRoot);
-    newTree->printTree(IN_ORDER);
+    tree->root = tree->insert(tree->root,15);
+    tree->root = tree->insert(tree->root,6);
+    tree->root = tree->insert(tree->root,18);
+    tree->root = tree->insert(tree->root,3);
+    tree->root = tree->insert(tree->root,7);
+    tree->root = tree->insert(tree->root,17);
+    tree->root = tree->insert(tree->root,20);
+    tree->root = tree->insert(tree->root,2);
+    tree->root = tree->insert(tree->root,4);
+    tree->root = tree->insert(tree->root,13);
+    tree->root = tree->insert(tree->root,9);
+    tree->printTree(IN_ORDER);
     return 0;
 }
