@@ -11,6 +11,8 @@ class MergeHeapNode {
     int curr_index;
   MergeHeapNode();
   MergeHeapNode(int arr_index, int curr_index);
+  bool isInfiniteNode();
+  void printNode();
 };
 
 class MergeHeap {
@@ -31,13 +33,20 @@ class MergeHeap {
     int resizeHeap();
     void insert(int arr_index, int curr_index);
     void swap(int i, int j);
+    MergeHeapNode* extractMin();
+    void percolateDown(int index);
+    int getMin(int left, int right, int index);
+    void printHeap();
 };
 
 class MergeKsorted {
   public:
     MergeHeap *h;
-    vector<vector<int>> arr;
+    vector<vector<int>> *arr;
   public:
-    MergeKsorted();
-    void merge();
+    MergeKsorted(vector<vector<int>> *arr);
+    void merge(vector<int> *arr);
+    void printSortedArrays();
+  private:
+    void initHeap();
 };
